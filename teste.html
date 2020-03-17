@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<style>
+		
+		</style>
+	</head>
+	<body>
+		<input type="text" id="txt" />
+        <br />
+        <input type="text" id="msk" value="(99) 9 9999-9999"/>
+        <br />
+        <button id="btn">Formatar</button>
+        <button id="btnT">Telefone</button>
+        <br />
+        <input id="res" type="text" />
+		<script src="Br1Helper.js"></script>
+		<script>
+            document.getElementById("btn").addEventListener("click", btn_click);
+
+            function btn_click(event) {
+                let texto = document.getElementById("txt").value;
+                let mask = document.getElementById("msk").value;
+                let formatado = Br1Helper.formatarNumero(texto, mask);
+                document.getElementById("res").value = formatado;
+            }
+
+            document.getElementById("btnT").addEventListener("click", btnT_click);
+
+            function btnT_click(event) {
+                let texto = document.getElementById("txt").value;
+                let formatado = Br1Helper.formatarTelefone(texto, "11");
+                document.getElementById("res").value = formatado;
+            }
+		</script>
+	</body>
+</html>
