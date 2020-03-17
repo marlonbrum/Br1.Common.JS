@@ -340,10 +340,6 @@
             return false;
     },
 
-    formatarDinheiro: function(valor) {
-        return valor.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-	},
-
     validarCNPJ: function (cnpj) {
         function validarCNPJ(cnpj) {
             cnpj = cnpj.replace(/[^\d]+/g, '');

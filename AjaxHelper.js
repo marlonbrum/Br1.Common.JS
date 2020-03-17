@@ -2,7 +2,7 @@
     rootUrl: "",
 
     get: function (url, params, successCallback, errorCallback) {
-        $.getJSON(this.getUrl(url), params,
+        jQuery.getJSON(this.getUrl(url), params,
             function (returnObj) {
                 AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
             })
@@ -12,7 +12,7 @@
     },
 
     post: function (url, params, successCallback, errorCallback) {
-        $.post(this.getUrl(url), params,
+        jQuery.post(this.getUrl(url), params,
             function (returnObj) {
                 AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
             })
@@ -22,7 +22,7 @@
     },
 
     postWithFiles: function (url, formData, successCallback, errorCallback) {
-        $.ajax({
+        jQuery.ajax({
             url: this.getUrl(url),
             data: formData,
             type: 'POST',
