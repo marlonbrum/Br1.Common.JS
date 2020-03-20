@@ -1,5 +1,52 @@
 ﻿var Br1Helper =
 {
+    // Prefixo utilizado por cada bandeira de cartão. Para a comparação funcionar, esse array deve estar 
+    // ordenado do prefixo com mais dígitos para o com menos 
+    prefixoBandeiraCartao: [
+        ['636368', 'elo'],
+        ['438935', 'elo'],
+        ['504175', 'elo'],
+        ['451416', 'elo'],
+        ['509048', 'elo'],
+        ['509067', 'elo'],
+        ['509049', 'elo'],
+        ['509069', 'elo'],
+        ['509050', 'elo'],
+        ['509074', 'elo'],
+        ['509068', 'elo'],
+        ['509040', 'elo'],
+        ['509045', 'elo'],
+        ['509051', 'elo'],
+        ['509046', 'elo'],
+        ['509066', 'elo'],
+        ['509047', 'elo'],
+        ['509042', 'elo'],
+        ['509052', 'elo'],
+        ['509043', 'elo'],
+        ['509064', 'elo'],
+        ['509040', 'elo'],
+        ['36297', 'elo'],
+        ['4011 ', 'elo'],
+        ['5067', 'elo'],
+        ['4576', 'elo'],
+        ['6011', 'discover'],
+        ['301', 'diners'],
+        ['305', 'diners'],
+        ['622', 'discover'],
+        ['36', 'diners'],
+        ['38', 'diners'],
+        ['34', 'amex'],
+        ['37', 'amex'],
+        ['64', 'discover'],
+        ['65', 'discover'],
+        ['50', 'aura'],
+        ['35', 'jcb'],
+        ['38', 'hipercard'],
+        ['60', 'hipercard'],
+        ['4', 'visa'],
+        ['5', 'mastercard']
+    ],
+
     hasValue: function (obj) {
         return obj !== null && typeof obj !== 'undefined';
     },
@@ -302,10 +349,21 @@
         });
     },
 
+    /**
+     * Remove da string qualquer caracter que não for um dígito de 0 a 9
+     * @param {string} valor string a ser tratada
+     * @returns {string} String com apenas os dígitos
+     */
     stripNonDigits: function (valor) {
         return valor.replace(/\D/g, "");
     },
 
+
+    /**
+     * Verifica se o CPF informado é valido. 
+     * @param {string} cpf CPF a ser validado, pode ser informado com ou sem os traços e pontos
+     * @returns {bool} Booleano indicando se o CPF é valido ou não
+     */
     validarCPF: function (cpf) {
         cpf = Br1Helper.stripNonDigits(cpf);
 
@@ -409,8 +467,8 @@
     combinePath: function (path1, path2) {
         return (path1 + "\\" + path2).replace("\\\\\\", "\\").replace("\\\\", "\\");
     },
-	
-	strToDate: function (str, useDefaultYear) {
+    
+    strToDate: function (str, useDefaultYear) {
         if (Br1Helper.isNullOrWhiteSpace(str))
             return null;
         else {
@@ -478,16 +536,29 @@
 
     insertAfter: function(node, referenceNode) {
         referenceNode.parentNode.insertBefore(node, referenceNode.nextSibling);
+    },
+
+    /**
+     * Identifica a bandeira do cartão de crédito com base no número do cartão.
+     * @param {string} numero Número do cartão de crédito
+     * @returns {string} Nome da bandeira do cartão
+     */
+    identificarBandeiraCartao: function(numero)
+    {
+        for (let i = 0; i < Br1Helper.prefixoBandeiraCartao.length; i++)
+            if (numero.startsWith(Br1Helper.prefixoBandeiraCartao[i][0]))
+                return Br1Helper.prefixoBandeiraCartao[i][1];
+        return "";
     }
 };
 
 
 
 /*************************************************************************************
- *    Polyfills para m�todos de String
- *     (Um polyfill � um m�todo que � adicionado ao tipo caso n�o exista, para suprir uma 
- *     incompatibilidade de browser. Se o browser j� d� suporte ao m�todo nativamente, usa-se]
- *     o m�todo do browser, caso contr�rio, usa-se esses.)
+ *    Polyfills para métodos de String
+ *     (Um polyfill é um método que é adicionado ao tipo caso não exista, para suprir uma 
+ *     incompatibilidade de browser. Se o browser já dá suporte ao método nativamente, usa-se
+ *     o método do browser, caso contrário, usa-se esses.)
  *************************************************************************************/
 
 if (!String.prototype.endsWith)
