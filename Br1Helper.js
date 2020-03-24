@@ -300,11 +300,13 @@
         input.each(function (index, element) {
             let tel = Br1Helper.stripNonDigits(element.value);
 
-            if (tel.length == 0)
-                element.value = "(11)";
+            if (tel.length === 0) {
+                if (!Br1Helper.isNullOrEmpty(dddPadrao))
+                    element.value = "(11)";
+            }
             else {
                 // Adiciona o DD se não tiver sido informado
-                if (tel.length === 8 || tel.length === 9)
+                if (!Br1Helper.isNullOrEmpty(dddPadrao) && (tel.length === 8 || tel.length === 9))
                     tel = sDddPadrao + tel;
                 element.value = tel;
             }
@@ -545,6 +547,27 @@
             if (numero.startsWith(Br1Helper.prefixoBandeiraCartao[i][0]))
                 return Br1Helper.prefixoBandeiraCartao[i][1];
         return "";
+    },
+
+    /**
+     * Formata o número do cartão de crédito de acordo com a bandeira
+     * @param {string} numero Número do cartão
+     * @returns {string} Número do cartão formatado
+     */
+    formatarNumCartao: function (numero) {
+        let bandeira = Br1Helper.identificarBandeiraCartao(numero);
+        let formato = "";
+
+        switch (bandeira) {
+            case "amex":
+                formato = "9999 999999 99999";
+                break;
+            default:
+                formato = "9999 9999 9999 9999";
+                break;
+        }
+
+        return Br1Helper.formatarNumero(numero, formato);
     }
 };
 
