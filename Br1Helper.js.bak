@@ -1,13 +1,5 @@
 ﻿var Br1Helper =
 {
-    /**
-     * Expressões regulares comuns, usadas para validação de campos */
-    RegularExpressions: {
-        CEP: /^\d{5}-\d{3}$/,
-        Telefone: /^\([1-9]{2}\)(\s9)?\s\d{4}-\d{4}$/,
-        MesAno: /^([1-9]|0[1-9]|1[0-2])\/(\d{2}|2\d{3})$/
-    },
-
     hasValue: function (obj) {
         return obj !== null && typeof obj !== 'undefined';
     },
@@ -261,13 +253,11 @@
         input.each(function (index, element) {
             let tel = Br1Helper.stripNonDigits(element.value);
 
-            if (tel.length === 0) {
-                if (!Br1Helper.isNullOrEmpty(dddPadrao))
-                    element.value = "(11)";
-            }
+            if (tel.length == 0)
+                element.value = "(11)";
             else {
                 // Adiciona o DD se não tiver sido informado
-                if (!Br1Helper.isNullOrEmpty(dddPadrao) && (tel.length === 8 || tel.length === 9))
+                if (tel.length === 8 || tel.length === 9)
                     tel = sDddPadrao + tel;
                 element.value = tel;
             }
@@ -312,21 +302,10 @@
         });
     },
 
-    /**
-     * Remove da string qualquer caracter que não for um dígito de 0 a 9
-     * @param {string} valor string a ser tratada
-     * @returns {string} String com apenas os dígitos
-     */
     stripNonDigits: function (valor) {
         return valor.replace(/\D/g, "");
     },
 
-
-    /**
-     * Verifica se o CPF informado é valido. 
-     * @param {string} cpf CPF a ser validado, pode ser informado com ou sem os traços e pontos
-     * @returns {bool} Booleano indicando se o CPF é valido ou não
-     */
     validarCPF: function (cpf) {
         cpf = Br1Helper.stripNonDigits(cpf);
 
@@ -360,10 +339,6 @@
         else
             return false;
     },
-
-    formatarDinheiro: function(valor) {
-        return valor.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-	},
 
     validarCNPJ: function (cnpj) {
         function validarCNPJ(cnpj) {
@@ -430,8 +405,8 @@
     combinePath: function (path1, path2) {
         return (path1 + "\\" + path2).replace("\\\\\\", "\\").replace("\\\\", "\\");
     },
-    
-    strToDate: function (str, useDefaultYear) {
+	
+	strToDate: function (str, useDefaultYear) {
         if (Br1Helper.isNullOrWhiteSpace(str))
             return null;
         else {
@@ -505,10 +480,10 @@
 
 
 /*************************************************************************************
- *    Polyfills para métodos de String
- *     (Um polyfill é um método que é adicionado ao tipo caso não exista, para suprir uma 
- *     incompatibilidade de browser. Se o browser já dá suporte ao método nativamente, usa-se
- *     o método do browser, caso contrário, usa-se esses.)
+ *    Polyfills para m�todos de String
+ *     (Um polyfill � um m�todo que � adicionado ao tipo caso n�o exista, para suprir uma 
+ *     incompatibilidade de browser. Se o browser j� d� suporte ao m�todo nativamente, usa-se]
+ *     o m�todo do browser, caso contr�rio, usa-se esses.)
  *************************************************************************************/
 
 if (!String.prototype.endsWith)
