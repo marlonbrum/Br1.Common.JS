@@ -1,51 +1,12 @@
 ﻿var Br1Helper =
 {
-    // Prefixo utilizado por cada bandeira de cartão. Para a comparação funcionar, esse array deve estar 
-    // ordenado do prefixo com mais dígitos para o com menos 
-    prefixoBandeiraCartao: [
-        ['636368', 'elo'],
-        ['438935', 'elo'],
-        ['504175', 'elo'],
-        ['451416', 'elo'],
-        ['509048', 'elo'],
-        ['509067', 'elo'],
-        ['509049', 'elo'],
-        ['509069', 'elo'],
-        ['509050', 'elo'],
-        ['509074', 'elo'],
-        ['509068', 'elo'],
-        ['509040', 'elo'],
-        ['509045', 'elo'],
-        ['509051', 'elo'],
-        ['509046', 'elo'],
-        ['509066', 'elo'],
-        ['509047', 'elo'],
-        ['509042', 'elo'],
-        ['509052', 'elo'],
-        ['509043', 'elo'],
-        ['509064', 'elo'],
-        ['509040', 'elo'],
-        ['36297', 'elo'],
-        ['4011 ', 'elo'],
-        ['5067', 'elo'],
-        ['4576', 'elo'],
-        ['6011', 'discover'],
-        ['301', 'diners'],
-        ['305', 'diners'],
-        ['622', 'discover'],
-        ['36', 'diners'],
-        ['38', 'diners'],
-        ['34', 'amex'],
-        ['37', 'amex'],
-        ['64', 'discover'],
-        ['65', 'discover'],
-        ['50', 'aura'],
-        ['35', 'jcb'],
-        ['38', 'hipercard'],
-        ['60', 'hipercard'],
-        ['4', 'visa'],
-        ['5', 'mastercard']
-    ],
+    /**
+     * Expressões regulares comuns, usadas para validação de campos */
+    RegularExpressions: {
+        CEP: /^\d{5}-\d{3}$/,
+        Telefone: /^\([1-9]{2}\)(\s9)?\s\d{4}-\d{4}$/,
+        MesAno: /^([1-9]|0[1-9]|1[0-2])\/(\d{2}|2\d{3})$/
+    },
 
     hasValue: function (obj) {
         return obj !== null && typeof obj !== 'undefined';
@@ -534,40 +495,6 @@
 
     insertAfter: function(node, referenceNode) {
         referenceNode.parentNode.insertBefore(node, referenceNode.nextSibling);
-    },
-
-    /**
-     * Identifica a bandeira do cartão de crédito com base no número do cartão.
-     * @param {string} numero Número do cartão de crédito
-     * @returns {string} Nome da bandeira do cartão
-     */
-    identificarBandeiraCartao: function(numero)
-    {
-        for (let i = 0; i < Br1Helper.prefixoBandeiraCartao.length; i++)
-            if (numero.startsWith(Br1Helper.prefixoBandeiraCartao[i][0]))
-                return Br1Helper.prefixoBandeiraCartao[i][1];
-        return "";
-    },
-
-    /**
-     * Formata o número do cartão de crédito de acordo com a bandeira
-     * @param {string} numero Número do cartão
-     * @returns {string} Número do cartão formatado
-     */
-    formatarNumCartao: function (numero) {
-        let bandeira = Br1Helper.identificarBandeiraCartao(numero);
-        let formato = "";
-
-        switch (bandeira) {
-            case "amex":
-                formato = "9999 999999 99999";
-                break;
-            default:
-                formato = "9999 9999 9999 9999";
-                break;
-        }
-
-        return Br1Helper.formatarNumero(numero, formato);
     }
 };
 
