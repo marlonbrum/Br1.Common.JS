@@ -420,7 +420,7 @@
     },
 
     validarData: function (data) {
-        return data.match(new RegExp("^([1-9]|0[1-9]|[12][0-9]|3[01])/([1-9]|0[1-9]|1[012])/[12][0-9]{3}jQuery"));
+        return data.match(new RegExp("^([1-9]|0[1-9]|[12][0-9]|3[01])/([1-9]|0[1-9]|1[012])/[12][0-9]{3}"));
     },
 
     applyRequiredAttribute: function (event) {

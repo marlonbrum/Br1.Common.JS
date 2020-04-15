@@ -55,8 +55,10 @@
      * @returns {string} Nome da bandeira do cartão
      */
     identityBrand: function (cardNumber) {
+        let sCardNumber = Br1Helper.stripNonDigits(cardNumber);
+
         for (let i = 0; i < Br1CreditCardHelper.brandPrefix.length; i++)
-            if (cardNumber.startsWith(Br1CreditCardHelper.brandPrefix[i][0]))
+            if (sCardNumber.startsWith(Br1CreditCardHelper.brandPrefix[i][0]))
                 return Br1CreditCardHelper.brandPrefix[i][1];
         return "";
     },
