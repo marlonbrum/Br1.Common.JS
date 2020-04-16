@@ -19,7 +19,7 @@
     });
 
 })(); */
-
+/*
 // DEpois que a gerenciaNet voltar a funcionar, verificar a possibilidade de jogar esse código em um método init
 var s = document.createElement('script');
 s.type = 'text/javascript';
@@ -41,10 +41,36 @@ $gn = { validForm: true, processed: false, done: {}, ready: function (fn) { $gn.
 $gn.ready(function (checkout) {
     console.log("gn.ready");
 });
+*/
+var $gn = null;
 
 var Br1GerenciaNetHelper = {
 
     _dummyMode: false,
+
+    init: function(identificadorConta, sandbox)
+    {
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        var v = parseInt(Math.random() * 1000000);
+        var baseUrl = "";
+        if (sandbox === true)
+            baseUrl = 'https://sandbox.gerencianet.com.br/v1/cdn/';
+        else
+            baseUrl = 'https://api.gerencianet.com.br/v1/cdn/';
+
+        s.src = baseUrl + identificadorConta + '/' + v;
+        s.async = false;
+        s.id = identificadorConta;
+        if (!document.getElementById(identificadorConta)) {
+            document.getElementsByTagName('head')[0].appendChild(s);
+        }
+        $gn = { validForm: true, processed: false, done: {}, ready: function (fn) { $gn.done = fn; } };
+
+        $gn.ready(function (checkout) {
+            console.log("gn.ready");
+        });
+    },
 
     /**
      * Habilita ou desabilita o Dummy mode. Se o dummy mode estiver ativado, não será feita nenhuma requisição 
@@ -55,11 +81,21 @@ var Br1GerenciaNetHelper = {
         Br1GerenciaNetHelper._dummyMode = value;  
     },
     
+    /**
+     * Obtêm o token de pagamento da GerenciaNet, a partir dos dados do cartão. 
+     * Esse token será usado na api do GerenciaNet para efetuar o pagamento
+     * @param {string} cardNumber Número do cartão , com ou sem espaços 
+     * @param {string} cvv Código de verificação
+     * @param {string} expiration Validade do cartão, no formato dd/aaaa
+     * @param {function} callback Função de retorno que será chamada quando o gerenciaNet responder 
+     */
     getPaymentToken: function (cardNumber, cvv, expiration, callback) {
         let aVenc = Br1CreditCardHelper.formatExpiration(expiration).split('/');
+
+        let sCardNumber = Br1Helper.stripNonDigits(cardNumber);
         let parametros = {
-            brand: Br1CreditCardHelper.identityBrand(cardNumber), // bandeira do cartão
-            number: cardNumber, // número do cartão
+            brand: Br1CreditCardHelper.identityBrand(sCardNumber), // bandeira do cartão
+            number: sCardNumber, // número do cartão
             cvv: cvv, // código de segurança
             expiration_month: aVenc[0], // mês de vencimento
             expiration_year: aVenc[1], // ano de vencimento
