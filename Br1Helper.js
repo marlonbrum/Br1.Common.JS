@@ -46,7 +46,7 @@
         }
     },
     
-    addOverlayMsg: function (ctl, message = "Aguarde ...") {
+    addOverlayMsg: function (ctl, message) {
         if (message === undefined) // Para browsers que não suportarem parâmetros padrão
             message = "Aguarde ...";
 
