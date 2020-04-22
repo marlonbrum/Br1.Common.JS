@@ -2,7 +2,7 @@
     rootUrl: "",
 
     get: function (url, params, successCallback, errorCallback) {
-        jQuery.getJSON(this.getUrl(url), params,
+        jQuery.getJSON(AjaxHelper.getUrl(url), params,
             function (returnObj) {
                 AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
             })
@@ -12,7 +12,7 @@
     },
 
     post: function (url, params, successCallback, errorCallback) {
-        jQuery.post(this.getUrl(url), params,
+        jQuery.post(AjaxHelper.getUrl(url), params,
             function (returnObj) {
                 AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
             })
@@ -23,7 +23,7 @@
 
     postWithFiles: function (url, formData, successCallback, errorCallback) {
         jQuery.ajax({
-            url: this.getUrl(url),
+            url: AjaxHelper.getUrl(url),
             data: formData,
             type: 'POST',
             contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
@@ -38,16 +38,16 @@
     },
 
     setRootUrl: function (url) {
-        this.rootUrl = url;
+        AjaxHelper.rootUrl = url;
         if (!url.endsWith("/"))
-            this.rootUrl += "/";
+            AjaxHelper.rootUrl += "/";
     },
 
     getUrl: function (url) {
         if (url.startsWith("/"))
-            return this.rootUrl + url.substring(1);
+            return AjaxHelper.rootUrl + url.substring(1);
         else
-            return this.rootUrl + url;
+            return AjaxHelper.rootUrl + url;
     },
 
     _handleErrorMessage: function (errorMessage, errorCallback) {

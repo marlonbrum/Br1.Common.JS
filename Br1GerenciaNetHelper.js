@@ -3,6 +3,7 @@
 var Br1GerenciaNetHelper = {
 
     _dummyMode: false,
+    _sandbox: false,
 
     init: function(identificadorConta, sandbox)
     {
@@ -10,6 +11,8 @@ var Br1GerenciaNetHelper = {
         s.type = 'text/javascript';
         var v = parseInt(Math.random() * 1000000);
         var baseUrl = "";
+        Br1GerenciaNetHelper._sandbox = sandbox;
+
         if (sandbox === true)
             baseUrl = 'https://sandbox.gerencianet.com.br/v1/cdn/';
         else
@@ -54,9 +57,12 @@ var Br1GerenciaNetHelper = {
             number: sCardNumber, // número do cartão
             cvv: cvv, // código de segurança
             expiration_month: aVenc[0], // mês de vencimento
-            expiration_year: aVenc[1], // ano de vencimento
-            sandbox: sandbox
+            expiration_year: aVenc[1] // ano de vencimento
         };
+
+        if (Br1GerenciaNetHelper._sandbox == true)
+            parametros.sandbox = true;
+
         console.log("$gn.checkout.getPaymentToken(" + JSON.stringify(parametros) + ")");
 
         if (this._dummyMode) 
