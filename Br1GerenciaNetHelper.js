@@ -1,48 +1,4 @@
-﻿/*(function () {
-
-    // Conta Márlon - Desenv
-    let id = 'ddc8d92542c05fcfbc99c2886e5724ce';
-
-    var s = document.createElement('script');
-    s.type = 'text/javascript';
-    var v = parseInt(Math.random() * 1000000);
-    s.src = 'https://sandbox.gerencianet.com.br/v1/cdn/' + id + '/' + v;
-    s.async = false;
-    s.id = id;
-    if (!document.getElementById(id)) {
-        document.getElementsByTagName('head')[0].appendChild(s);
-    }
-    $gn = { validForm: true, processed: false, done: {}, ready: function (fn) { $gn.done = fn; } };
-
-    $gn.ready(function (checkout) {
-        console.log("gn.ready");
-    });
-
-})(); */
-/*
-// DEpois que a gerenciaNet voltar a funcionar, verificar a possibilidade de jogar esse código em um método init
-var s = document.createElement('script');
-s.type = 'text/javascript';
-var v = parseInt(Math.random() * 1000000);
-var baseUrl = "";
-if (sandbox === true)
-    baseUrl = 'https://sandbox.gerencianet.com.br/v1/cdn/';
-else
-    baseUrl = 'https://api.gerencianet.com.br/v1/cdn/';
-
-s.src = baseUrl + identificadorConta + '/' + v;
-s.async = false;
-s.id = identificadorConta;
-if (!document.getElementById(identificadorConta)) {
-    document.getElementsByTagName('head')[0].appendChild(s);
-}
-$gn = { validForm: true, processed: false, done: {}, ready: function (fn) { $gn.done = fn; } };
-
-$gn.ready(function (checkout) {
-    console.log("gn.ready");
-});
-*/
-var $gn = null;
+﻿var $gn = null;
 
 var Br1GerenciaNetHelper = {
 
@@ -132,9 +88,9 @@ var Br1GerenciaNetHelper = {
             return {
                 hasError: true,
                 errorType: errorInfo.error,
-                propertyFull,
-                propertyName,
-                errorMessage
+                propertyFull: propertyFull,
+                propertyName: propertyName,
+                errorMessage: errorMessage
             };
         }
     }
