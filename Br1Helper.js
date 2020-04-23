@@ -130,13 +130,13 @@
     },
 
     /**
-     * Executa uma pesquisa na Input informada conforme o usu�rio digita. Para evitar muitas 
-     * pesquisas subsequentes, a pesquisa s� � executada quando h� um intervalo entre as letras
+     * Executa uma pesquisa na Input informada conforme o usuário digita. Para evitar muitas 
+     * pesquisas subsequentes, a pesquisa só é executada quando há um intervalo entre as letras
      * digitadas
-     * @param {int} delayMS Intervalo em Millisegundos entre uma digita��o e outra para que a pesquisa seja acionada 
-     * @param {int} minLength N�mero m�nimo de caracteres que deve ser digitado para que a pesquisa seja acionada
-     * @param {HTMLObjectElement} inputCtl Input Text onde o texto pesquisado ser� digitado.
-     * @param {function} onSearch M�todo que ser� chamado quando a pesquisa for executada
+     * @param {int} delayMS Intervalo em Millisegundos entre uma digitação e outra para que a pesquisa seja acionada 
+     * @param {int} minLength Número mínimo de caracteres que deve ser digitado para que a pesquisa seja acionada
+     * @param {HTMLObjectElement} inputCtl Input Text onde o texto pesquisado será digitado.
+     * @param {function} onSearch Método que será chamado quando a pesquisa for executada
      */
     delayedSearch: function (delayMS, minLength, inputCtl, onSearch)
     {
