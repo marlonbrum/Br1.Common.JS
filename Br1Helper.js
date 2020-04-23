@@ -362,6 +362,9 @@
     },
 
     formatarDinheiro: function(valor) {
+        if (typeof valor == "string")
+            valor = parseFloat(valor);
+            
         return valor.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 	},
 
