@@ -157,7 +157,7 @@
                     if (searchTextBox.searchActive) {
                         console.log("[Search] add to search queue");
                         var searchQueue = searchTextBox.searchQueue;
-                        if (searchQueue === null) {
+                        if (Br1Helper.isNullOrEmpty(searchQueue)) {
                             searchQueue = new Array();
                             searchTextBox.searchQueue = searchQueue;
                         }
@@ -166,7 +166,9 @@
                     else {
                         console.log("[Search] Execute search: " + searchValue);
                         searchTextBox.searchActive = true;
-                        Br1Helper.addOverlayMsg(jQuery(searchTextBox).next(), "Pesquisando ...");
+                        let overlayCtl = jQuery(searchTextBox).next();
+                        if (overlayCtl != null && overlayCtl.length > 0)
+                            Br1Helper.addOverlayMsg(overlayCtl, "Pesquisando ...");
                         onSearch(searchTextBox, searchValue);
                     }
                 }
@@ -188,7 +190,11 @@
             next.onSearch(inputCtl, next.value);
         }
         else
-            Br1Helper.clearOverlay(jQuery(inputCtl).next());
+        {
+            let overlayCtl = jQuery(inputCtl).next();
+            if (overlayCtl != null && overlayCtl.length > 0)
+                Br1Helper.clearOverlay(overlayCtl);
+        }
     },
 
     /**
