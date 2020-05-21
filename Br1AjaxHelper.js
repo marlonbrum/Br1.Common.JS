@@ -1,4 +1,4 @@
-﻿var AjaxHelper = {
+﻿var Br1AjaxHelper = {
     rootUrl: "",
 
     get: function (url, params, successCallback, errorCallback) {

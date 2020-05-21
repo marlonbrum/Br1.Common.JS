@@ -509,6 +509,7 @@
     insertAfter: function(node, referenceNode) {
         referenceNode.parentNode.insertBefore(node, referenceNode.nextSibling);
     }
+    
 };
 
 
