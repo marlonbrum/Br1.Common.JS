@@ -1,54 +1,54 @@
 var MsgBoxHelper = {
     msgInfo: function (msgText, callback)
     {
-        customMessage(msgText, ["OK"], callback);
+        MsgBoxHelper.customMessage(msgText, ["OK"], callback);
     },
 
     msgAsk: function (msgText, callback)
     {
-        customMessage(msgText, ["Sim", "Não"], function (button) {
-            if (isFunction(callback))
+        MsgBoxHelper.customMessage(msgText, ["Sim", "Não"], function (button) {
+            if (Br1Helper.isFunction(callback))
                 callback(button === 0);
         });
     },
 
     msgConfirm: function (msgText, callback)
     {   
-        customMessage(msgText, ["OK", "Cancelar"], function (button) {
-            if (isFunction(callback))
+        MsgBoxHelper.customMessage(msgText, ["OK", "Cancelar"], function (button) {
+            if (Br1Helper.isFunction(callback))
                 callback(button === 0);
         });
     },
 
     customMessage: function (content, buttons, callback)
     {
-        let msgBox = document.querySelector(".message-box");
-        if (msgBox == null)
+        let msgBox = jQuery(".message-box");
+        if (msgBox.length == 0)
         {            
-            msgBox = document.createElement("div"); 
-            msgBox.classList.add("message-box");
-            document.body.appendChild(msgBox);
+            msgBox = jQuery("<div>"); 
+            msgBox.addClass("message-box");
+            jQuery(document.body).append(msgBox);
         }
 
-        Br1DomHelper.clearChilds(msgBox);
-
-        
-        let divContent = Br1DomHelper.append(msgBox, "div", "message-content");
+        msgBox.empty();
+        let divContent = jQuery("<div class='message-content'>");
+        msgBox.append(divContent);
 
         if (typeof content === "string")
-            divContent.innerText = content;
+            divContent.text(content);
         else
-        {
-            Br1DomHelper.clearChilds();
-            divContent.appendChild(content);
-        }
-        
-        let buttonBar = Br1DomHelper.append(msgBox, "div", "buttons");
+            divContent.append(content); // TODO: Aqui estou passando um objeto puro, verificar se precisa ser Jquery
+    
+        let buttonBar = jQuery("<div class='buttons'>");
+        msgBox.append(buttonBar);
+
         for (let i=0; i < buttons.length; i++)
         {
-            let btn = Br1DomHelper.append(buttonBar, "button", "botao", buttons[i]);            
-            btn.dataset.idx = i;
-            btn.addEventListener("click", function(event) {
+            let btn = jQuery("<button class='botao'>");
+            buttonBar.append(btn);
+            btn.text(buttons[i]);
+            btn.data("idx", i);
+            btn.click(function(event) {
                 let idx = event.target.dataset.idx;
                 event.target.closest(".message-box").dataset.button_idx = idx;
 
