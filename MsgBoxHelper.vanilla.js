@@ -1,27 +1,37 @@
 var MsgBoxHelper = {
-    msgInfo: function (msgText, callback)
-    {
-        MsgBoxHelper.customMessage(msgText, ["OK"], callback);
+    __defaultOptions: {},
+
+    setOptions(options) {
+        this.__defaultOptions = options;
     },
 
-    msgAsk: function (msgText, callback)
+    msgInfo: function (msgText, callback, options)
+    {
+        MsgBoxHelper.customMessage(msgText, ["OK"], callback, options);
+    },
+
+    msgAsk: function (msgText, callback, options)
     {
         MsgBoxHelper.customMessage(msgText, ["Sim", "Não"], function (button) {
             if (Br1Helper.isFunction(callback))
                 callback(button === 0);
-        });
+        }, options);
     },
 
-    msgConfirm: function (msgText, callback)
+    msgConfirm: function (msgText, callback, options)
     {   
         MsgBoxHelper.customMessage(msgText, ["OK", "Cancelar"], function (button) {
             if (Br1Helper.isFunction(callback))
                 callback(button === 0);
-        });
+        }, options);
     },
 
-    customMessage: function (content, buttons, callback)
-    {
+    customMessage: function (content, buttons, callback, options)
+    {       
+        let opt = {};
+        Object.assign(opt, this.__defaultOptions);  
+        Object.assign(opt, options);
+
         let msgBox = jQuery(".message-box");
         if (msgBox.length == 0)
         {            
@@ -41,6 +51,7 @@ var MsgBoxHelper = {
     
         let buttonBar = jQuery("<div class='buttons'>");
         msgBox.append(buttonBar);
+       
 
         for (let i=0; i < buttons.length; i++)
         {
@@ -48,14 +59,19 @@ var MsgBoxHelper = {
             buttonBar.append(btn);
             btn.text(buttons[i]);
             btn.data("idx", i);
+
+            if (opt !== undefined && opt.buttonClass !== undefined)
+                btn.addClass(opt.buttonClass);
+
             btn.click(function(event) {
-                let idx = event.target.dataset.idx;
-                event.target.closest(".message-box").dataset.button_idx = idx;
+                let botao = jQuery(event.target);
+                let idx = botao.data("idx");
+                botao.closest(".message-box").data("button_idx", idx); 1
 
                 jQuery.modal.close();     
             });
         }
-       
+    
         msgBox.modal({ 
             showClose: false,
             escapeClose: false,  
@@ -65,11 +81,11 @@ var MsgBoxHelper = {
         msgBox.unbind(jQuery.modal.AFTER_CLOSE);
 
         msgBox.bind(jQuery.modal.AFTER_CLOSE, function(event, modal) {
-            let idx = modal.elm[0].dataset.button_idx;
+            let idx = modal.elm.data("button_idx");
             setTimeout(function() {
                 if(callback != null)
                     callback(idx);
             }, 100);
-        });     
+        });       
     }
 };

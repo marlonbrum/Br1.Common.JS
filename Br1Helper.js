@@ -508,6 +508,52 @@
 
     insertAfter: function(node, referenceNode) {
         referenceNode.parentNode.insertBefore(node, referenceNode.nextSibling);
+    },
+    
+    /**
+     * Carrega os arquivos passados no array, se já não estiverem carregados.
+     * Os arquivos passados pode ser scripts .js ou arquivos .css
+     */
+    loadFiles: function(filesToLoad, callback) {
+        if (filesToLoad.length == 0)
+        {
+            if (Br1Helper.isFunction(callback))
+                callback();
+        }
+        else{
+            let file = filesToLoad.pop();
+            let extIndex = file.lastIndexOf('.');
+            let ext = file.substr(file.lastIndexOf('.')).toUpperCase();
+
+            let element = document.getElementById(file);
+            if (element == null)
+            {
+                if(ext === ".JS")
+                {
+                    var script = document.createElement('script');
+                    script.id = file;
+                    script.onload = function () {
+                        Br1Helper.loadFiles(filesToLoad, callback);
+                    };
+                    script.src = file;
+                    document.head.appendChild(script); 
+                }
+                else if (ext === ".CSS")
+                {
+                    var link  = document.createElement('link');
+                    link.id   = file;
+                    link.rel  = 'stylesheet';
+                    link.type = 'text/css';
+                    link.href = file;
+                    link.media = 'all';
+                    document.head.appendChild(link);
+
+                    Br1Helper.loadFiles(filesToLoad, callback);
+                }
+            }
+            else
+                Br1Helper.loadFiles(filesToLoad, callback);
+        }               
     }
     
 };
