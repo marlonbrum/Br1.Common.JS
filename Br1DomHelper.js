@@ -14,5 +14,13 @@ var Br1DomHelper = {
             el.innerText = text;
 
         return el;
+    },
+
+    generateOptionsHtml: function(optionsArray, selectedValue)
+    {
+        return optionsArray.reduce( (str, opt) => 
+            str + "<option value='" + opt[0] + "' " + (opt[0] === selectedValue?"selected":"") + ">"
+                + opt[1]
+                + "</option>", "");
     }
 };

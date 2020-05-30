@@ -53,8 +53,11 @@
     _handleErrorMessage: function (errorMessage, errorCallback) {
         let showErrorMessage = true;
         if (Br1Helper.isFunction(errorCallback))
+        {
             showErrorMessage = errorCallback(errorMessage);
-
+            if (showErrorMessage === undefined)
+                showErrorMessage = true;
+        }
         if (showErrorMessage)
             MsgBoxHelper.msgInfo(errorMessage);
     },

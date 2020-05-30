@@ -45,7 +45,10 @@ var MsgBoxHelper = {
         msgBox.append(divContent);
 
         if (typeof content === "string")
+        {
+            divContent.addClass("message-text");
             divContent.text(content);
+        }
         else
             divContent.append(content); // TODO: Aqui estou passando um objeto puro, verificar se precisa ser Jquery
     
@@ -66,6 +69,12 @@ var MsgBoxHelper = {
             btn.click(function(event) {
                 let botao = jQuery(event.target);
                 let idx = botao.data("idx");
+                let msgBox = botao.closest(".message-box");
+
+                if (Br1Helper.isFunction(opt.onValidate))
+                    if (!opt.onValidate(idx, msgBox))
+                        return;
+                
                 botao.closest(".message-box").data("button_idx", idx); 1
 
                 jQuery.modal.close();     
@@ -84,7 +93,7 @@ var MsgBoxHelper = {
             let idx = modal.elm.data("button_idx");
             setTimeout(function() {
                 if(callback != null)
-                    callback(idx);
+                    callback(idx, msgBox);
             }, 100);
         });       
     }

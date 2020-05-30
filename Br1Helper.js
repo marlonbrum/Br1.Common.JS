@@ -470,6 +470,13 @@
         }
     },
 
+    dateToStr: function(date) {
+        if (date === null)
+            return "";
+        else
+            return date.getDate()
+    },
+
     isDigit: function(char)
     {
         return char >= '0' && char <= '9';
@@ -554,8 +561,7 @@
             else
                 Br1Helper.loadFiles(filesToLoad, callback);
         }               
-    }
-    
+    }    
 };
 
 
@@ -602,6 +608,12 @@ if (!String.prototype.padStart) {
     };
 }
 
+if (!Number.prototype.padStart) {
+    Number.prototype.padStart = function padStart(targetLength, padString) {
+        return this.toString().padStart(targetLength, padString);
+    };
+}
+
 // https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padEnd
 if (!String.prototype.padEnd) {
@@ -618,5 +630,11 @@ if (!String.prototype.padEnd) {
             }
             return String(this) + padString.slice(0, targetLength);
         }
+    };
+}
+
+if (!Number.prototype.padEnd) {
+    Number.prototype.padEnd = function padEnd(targetLength, padString) {
+        return this.toString().padEnd(targetLength, padString);
     };
 }
