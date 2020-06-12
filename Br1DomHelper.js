@@ -16,11 +16,54 @@ var Br1DomHelper = {
         return el;
     },
 
-    generateOptionsHtml: function(optionsArray, selectedValue)
+    generateOptionsHtml: function(optionsArray, selectedValue, emptyItem)
     {
         return optionsArray.reduce( (str, opt) => 
             str + "<option value='" + opt[0] + "' " + (opt[0] === selectedValue?"selected":"") + ">"
                 + opt[1]
-                + "</option>", "");
+                + "</option>", 
+            emptyItem ? "<option value=''></option>":"");
+    },
+
+    addOptions: function(select, optionsArray, selectedValue, emptyItem)
+    {
+        select.options.clear();
+        if (emptyItem)        
+            select.options.add(new Option("", ""));
+
+        for (let i=0; i < optionsArray.length; i++)
+        {
+            let opt = new Option(optionsArray[i], optionsArray[i]);
+            if (selectedValue == opt.value)
+                opt.selected = true;
+            select.options.add(opt);
+        }
+    },
+
+    sortSelect: function(select, sortFunction) 
+    {
+        if (sortFunction == null || sortFunction == undefined)
+            sortFunction = (valueA, textA, valueB, textB) => {
+                let valA = textA.toUpperCase();
+                let valB = textB.toUpperCase();
+                if (valA === valB)
+                    return 0;
+                else if (valA < valB)
+                    return -1;
+                else
+                    return 1;
+            };
+
+        let itens = new Array();
+        for (var i=0;i<select.options.length;i++) 
+            itens[i] = [select.options[i].value, select.options[i].text];
+
+        itens.sort((itemA, itemB) => sortFunction(itemA[0], itemA[1], itemB[0], itemB[1]));
+
+        while (select.options.length > 0) 
+            select.options[0] = null;
+        
+        for (var i=0;i<itens.length;i++) 
+            select.options[i] = new Option(itens[i][1],itens[i][0]);        
     }
 };
