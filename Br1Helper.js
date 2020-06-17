@@ -28,6 +28,10 @@
         return this.isNullOrEmpty(valor) || valor === "0" || valor === 0;
     },
 
+    isString: function(valor) {
+        return (typeof valor === "string" || valor instanceof String);
+    },
+
     addSpinAnimation: function () {
         if (document.getElementById("styleKeyframesSpin") == null) {
             var style = document.createElement('style');
