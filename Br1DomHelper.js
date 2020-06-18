@@ -25,9 +25,16 @@ var Br1DomHelper = {
             emptyItem ? "<option value=''></option>":"");
     },
 
+    clearOptions: function(select)
+    {
+        while (select.options.length)
+            select.remove(0);
+    },
+
     addOptions: function(select, optionsArray, selectedValue, emptyItem)
     {
-        select.options.clear();
+        Br1DomHelper.clearOptions(select);
+        
         if (emptyItem)        
             select.options.add(new Option("", ""));
 
