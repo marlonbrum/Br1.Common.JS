@@ -28,6 +28,10 @@
         return this.isNullOrEmpty(valor) || valor === "0" || valor === 0;
     },
 
+    isString: function(valor) {
+        return (typeof valor === "string" || valor instanceof String);
+    },
+
     addSpinAnimation: function () {
         if (document.getElementById("styleKeyframesSpin") == null) {
             var style = document.createElement('style');
@@ -157,7 +161,7 @@
                     if (searchTextBox.searchActive) {
                         console.log("[Search] add to search queue");
                         var searchQueue = searchTextBox.searchQueue;
-                        if (searchQueue === null) {
+                        if (Br1Helper.isNullOrEmpty(searchQueue)) {
                             searchQueue = new Array();
                             searchTextBox.searchQueue = searchQueue;
                         }
@@ -166,7 +170,9 @@
                     else {
                         console.log("[Search] Execute search: " + searchValue);
                         searchTextBox.searchActive = true;
-                        Br1Helper.addOverlayMsg(jQuery(searchTextBox).next(), "Pesquisando ...");
+                        let overlayCtl = jQuery(searchTextBox).next();
+                        if (overlayCtl != null && overlayCtl.length > 0)
+                            Br1Helper.addOverlayMsg(overlayCtl, "Pesquisando ...");
                         onSearch(searchTextBox, searchValue);
                     }
                 }
@@ -188,7 +194,11 @@
             next.onSearch(inputCtl, next.value);
         }
         else
-            Br1Helper.clearOverlay(jQuery(inputCtl).next());
+        {
+            let overlayCtl = jQuery(inputCtl).next();
+            if (overlayCtl != null && overlayCtl.length > 0)
+                Br1Helper.clearOverlay(overlayCtl);
+        }
     },
 
     /**
@@ -479,6 +489,13 @@
         }
     },
 
+    dateToStr: function(date) {
+        if (date === null)
+            return "";
+        else
+            return date.getDate()
+    },
+
     isDigit: function(char)
     {
         return char >= '0' && char <= '9';
@@ -517,7 +534,59 @@
 
     insertAfter: function(node, referenceNode) {
         referenceNode.parentNode.insertBefore(node, referenceNode.nextSibling);
-    }
+    },
+    
+    /**
+     * Carrega os arquivos passados no array, se já não estiverem carregados.
+     * Os arquivos passados pode ser scripts .js ou arquivos .css
+     */
+    loadFiles: function(filesToLoad, callback) {
+        if (filesToLoad.length == 0)
+        {
+            if (Br1Helper.isFunction(callback))
+                callback();
+        }
+        else{
+            let file = filesToLoad.pop();
+            let extIndex = file.lastIndexOf('.');
+            let ext = file.substr(file.lastIndexOf('.')).toUpperCase();
+
+            let element = document.getElementById(file);
+            if (element == null)
+            {
+                if(ext === ".JS")
+                {
+                    var script = document.createElement('script');
+                    script.id = file;
+                    script.onload = function () {
+                        Br1Helper.loadFiles(filesToLoad, callback);
+                    };
+                    script.src = file;
+                    document.head.appendChild(script); 
+                }
+                else if (ext === ".CSS")
+                {
+                    var link  = document.createElement('link');
+                    link.id   = file;
+                    link.rel  = 'stylesheet';
+                    link.type = 'text/css';
+                    link.href = file;
+                    link.media = 'all';
+                    document.head.appendChild(link);
+
+                    Br1Helper.loadFiles(filesToLoad, callback);
+                }
+            }
+            else
+                Br1Helper.loadFiles(filesToLoad, callback);
+        }
+    },
+        
+    addUrlParameter: function(url, parameter, value)
+    {
+        return url + (url.indexOf('?') > 0 ? '&':'?') 
+            + parameter + '=' + encodeURIComponent(value);
+    }    
 };
 
 
@@ -564,6 +633,12 @@ if (!String.prototype.padStart) {
     };
 }
 
+if (!Number.prototype.padStart) {
+    Number.prototype.padStart = function padStart(targetLength, padString) {
+        return this.toString().padStart(targetLength, padString);
+    };
+}
+
 // https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padEnd
 if (!String.prototype.padEnd) {
@@ -580,5 +655,11 @@ if (!String.prototype.padEnd) {
             }
             return String(this) + padString.slice(0, targetLength);
         }
+    };
+}
+
+if (!Number.prototype.padEnd) {
+    Number.prototype.padEnd = function padEnd(targetLength, padString) {
+        return this.toString().padEnd(targetLength, padString);
     };
 }
