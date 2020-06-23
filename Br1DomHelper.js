@@ -72,5 +72,12 @@ var Br1DomHelper = {
         
         for (var i=0;i<itens.length;i++) 
             select.options[i] = new Option(itens[i][1],itens[i][0]);        
+    },
+
+
+    onDomReady(callback) {
+        document.addEventListener("DOMContentLoaded", function(event) {
+            callback(event);
+        });
     }
 };

@@ -564,7 +564,13 @@
             }
             else
                 Br1Helper.loadFiles(filesToLoad, callback);
-        }               
+        }
+    },
+        
+    addUrlParameter: function(url, parameter, value)
+    {
+        return url + (url.indexOf('?') > 0 ? '&':'?') 
+            + parameter + '=' + encodeURIComponent(value);
     }    
 };
 
