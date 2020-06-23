@@ -280,6 +280,14 @@
         });        
     },
 
+    maskDate: function (input) {
+        input.mask("00/00/0000");
+    },
+
+    maskTime: function (input) {
+        input.mask("00:00");
+    },
+
     changeValue: function (input, valor) {
         if (valor === undefined)
             return;
@@ -432,6 +440,13 @@
 
     combinePath: function (path1, path2) {
         return (path1 + "\\" + path2).replace("\\\\\\", "\\").replace("\\\\", "\\");
+    },
+
+    dateToStr: function (dt) {
+        if (dt === null)
+            return "";
+        else
+            return dt.getDate().toString().padStart(2, "0") + "/" + (dt.getMonth() + 1).toString().padStart(2, "0") + "/" + dt.getFullYear().toString();
     },
     
     strToDate: function (str, useDefaultYear) {
