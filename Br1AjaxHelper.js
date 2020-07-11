@@ -84,7 +84,7 @@
         }
         else
         {
-            console.error("ajax error: " + returnObj.errorMessage);
+            console.error("ajax error: " + returnObj.ErrorMessage);
             Br1AjaxHelper._handleErrorMessage(returnObj.ErrorMessage, errorCallback);
         }
     }
