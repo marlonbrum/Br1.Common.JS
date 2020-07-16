@@ -569,6 +569,10 @@
         
     addUrlParameter: function(url, parameter, value)
     {
+        let posHash = url.indexOf('#');
+        if (posHash > 0)
+            url = url.substring(0, posHash - 1);
+            
         return url + (url.indexOf('?') > 0 ? '&':'?') 
             + parameter + '=' + encodeURIComponent(value);
     }    
