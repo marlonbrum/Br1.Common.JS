@@ -18,7 +18,7 @@ var Br1Autosave = {
 
     },
 
-    bindControls: function (parent, d) {
+    bindControls: function (parent) {
         let controls = this.getControlList(parent);
 
         for (let i = 0; i < controls.length; i++) {

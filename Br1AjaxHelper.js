@@ -76,10 +76,6 @@
         Br1AjaxHelper._handleErrorMessage(errorMessage, errorCallback);
     },
 
-    novoMetodo3: function() {
-        
-    },
-
     _ajaxReturn: function (returnObj, successCallback, errorCallback) {
         if (returnObj.ErrorMessage === null || returnObj.ErrorMessage === undefined) {
             console.log("ajax ok");
