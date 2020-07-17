@@ -566,8 +566,13 @@
                 Br1Helper.loadFiles(filesToLoad, callback);
         }
     },
+
+    novoMetodo: function(p1)
+    {
+
+    },
         
-    addUrlParameter: function(url, parameter, value)
+    addUrlParameter: function(url, parameter, value, p3)
     {
         let posHash = url.indexOf('#');
         if (posHash > 0)
