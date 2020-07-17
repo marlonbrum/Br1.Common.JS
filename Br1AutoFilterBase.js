@@ -4,6 +4,8 @@ function Br1AutoFilterBase(table, buttonImage) {
     this._table.autoFiltro = this;
     this._colunasIgnorar = [];
     this._filtros = [];
+    this._filterMode = [];
+    this._filterFormat = [];
     this.carregar();
 }
 
@@ -12,7 +14,14 @@ Br1AutoFilterBase.prototype.carregar = function () {
     let self = this;
     for (let index = 0; index < headers.length; index++) {
         let el = $(headers[index]);
-        if (el.hasClass("nao-filtrar"))
+
+        let filterMode = el.data("filter-mode");
+        let filterFormat = el.data("filter-format");
+
+        this._filterMode.push(filterMode);
+        this._filterFormat.push(filterFormat);
+
+        if (filterMode === "none")
             this._colunasIgnorar.push(index);
         else {
             let btn = el.find(".auto-filtro");
@@ -40,48 +49,69 @@ Br1AutoFilterBase.prototype.btnMostrarFiltroClick = function (botao) {
 
     let tbody = this._table.find("tbody")[0];
 
-    // Monta lista de valores diferentes do campo
-    let valores = [];
-    //let colIndex = header.cellIndex;
-    for (let i = 0; i < tbody.rows.length; i++) {
-
-        if (this.isRowInFilter(tbody.rows[i], header[0].cellIndex)) {
-            let valor = tbody.rows[i].cells[header[0].cellIndex].innerText;
-            if (Br1Helper.isNullOrWhiteSpace(valor))
-                valor = "(Vazio)";
-
-            if (valores.indexOf(valor) === -1)
-                valores.push(valor);
-        }
-    }
-
-    valores = valores.sort();
-
+       
     let oModal = this.createModal();
 
     let ul = oModal.find("ul");
     oModal.data("cellIndex", header[0].cellIndex);
-
+    oModal.data("filterMode", this._filterMode[header[0].cellIndex]);
+    oModal.data("filterFormat", this._filterFormat[header[0].cellIndex]);
+    
     oModal.find("h4").text("Filtrar campo " + titulo);
 
-    let liTodos = this.createListItem(ul, "- Todos -");
+    switch (this._filterMode[header[0].cellIndex]) {
+        case "range":
+            let from, to;
 
-    liTodos.addClass("todos");
-    let chkTodos = liTodos.find("input");
-    let self = this;
+            if (this._filterFormat[header[0].cellIndex] === "date") {
+                from = Br1Helper.dateToStr(this.getRangeFrom(header[0].cellIndex));
+                to = Br1Helper.dateToStr(this.getRangeTo(header[0].cellIndex));
+            }
+            else {
+                from = this.getRangeFrom(header[0].cellIndex);
+                to = this.getRangeTo(header[0].cellIndex);
+            }
 
-    chkTodos.change(function (event) {
-        self.chkTodosChange(event.target);
-    });
+            this.createRangeInput(ul, from, to, this._filterFormat[header[0].cellIndex]);
+            break;
+        default:
+            // Monta lista de valores diferentes do campo
+            let valores = [];
+            //let colIndex = header.cellIndex;
+            for (let i = 0; i < tbody.rows.length; i++) {
 
-    chkTodos[0].checked = true;
-    for (let iValor = 0; iValor < valores.length; iValor++) {
-        let chk = this.isValueInFilter(header[0].cellIndex, valores[iValor]);
-        this.createListItem(ul, valores[iValor], chk);
-        if (!chk)
-            chkTodos[0].checked = false;
+                if (this.isRowInFilter(tbody.rows[i], header[0].cellIndex)) {
+                    let valor = tbody.rows[i].cells[header[0].cellIndex].innerText;
+                    if (Br1Helper.isNullOrWhiteSpace(valor))
+                        valor = "(Vazio)";
+
+                    if (valores.indexOf(valor) === -1)
+                        valores.push(valor);
+                }
+            }
+
+            valores = valores.sort();
+
+            let liTodos = this.createListItem(ul, "- Todos -");
+
+            liTodos.addClass("todos");
+            let chkTodos = liTodos.find("input");
+            let self = this;
+
+            chkTodos.change(function (event) {
+                self.chkTodosChange(event.target);
+            });
+
+            chkTodos[0].checked = true;
+            for (let iValor = 0; iValor < valores.length; iValor++) {
+                let chk = this.isValueInFilter(header[0].cellIndex, valores[iValor]);
+                this.createListItem(ul, valores[iValor], chk);
+                if (!chk)
+                    chkTodos[0].checked = false;
+            }
+            break;
     }
-
+        
     this.showModal(oModal);
 };
 
@@ -146,14 +176,31 @@ Br1AutoFilterBase.prototype.createModal = function () {
 
 Br1AutoFilterBase.prototype.btnFiltrarClick = function (botao) {
     let modal = $(botao).closest(".auto-filtro-modal");
-
-    let li = modal.find("ul li:not(.todos):has(input:checked) span");
+    let cellIndex = modal.data("cellIndex");
+    let filterMode = modal.data("filterMode");
+    let filterFormat = modal.data("filterFormat");
     let valores = [];
-    for (let i = 0; i < li.length; i++)
-        valores.push(li[i].innerText);
 
-    let campo = modal.data("cellIndex");
-    this._filtros[campo] = valores;
+    if (filterMode === "range") {
+        let from = modal.find(".range-from").val();
+        let to = modal.find(".range-to").val();
+
+        if (filterFormat === "date") {
+            from = Br1Helper.strToDate(from);
+            to = Br1Helper.strToDate(to);
+        }
+
+        valores.push(from);
+        valores.push(to);
+    }
+    else {
+        let li = modal.find("ul li:not(.todos):has(input:checked) span");
+
+        for (let i = 0; i < li.length; i++)
+            valores.push(li[i].innerText);
+    }
+
+    this._filtros[cellIndex] = valores;
 
     this.filtrarTabela();
 };
@@ -164,6 +211,33 @@ Br1AutoFilterBase.prototype.btnLimparClick = function (botao) {
     let campo = modal.data("cellIndex");
     this._filtros[campo] = null;
     this.filtrarTabela();
+};
+
+Br1AutoFilterBase.prototype.createRangeInputField = function (ul, value, className, maskFormat) {
+    let li = $("<li class='collection-item'>");
+    let input = $("<input type='text' class='form-control " + className + "' value='" + (value === null ? "" : value) + "'>");
+    if (!Br1Helper.isNullOrWhiteSpace(maskFormat))
+        input.mask(maskFormat);
+
+    li.append(
+        $("<label>")
+            .append("<span style='color: black'>In&iacute;cio: </span>")
+            .append(input)
+    );
+    ul.append(li);
+    return li;
+};
+
+Br1AutoFilterBase.prototype.createRangeInput = function (ul, valueFrom, valueTo, format) {
+    let mask = "";
+    if (format === "date")
+        mask = "00/00/0000";
+    else if (format === "time")
+        mask = "00:00";
+
+    let liFrom = this.createRangeInputField(ul, valueFrom, "range-from", mask);
+    let liTo = this.createRangeInputField(ul, valueTo, "range-to", mask);
+    return [liFrom, liTo];
 };
 
 Br1AutoFilterBase.prototype.createListItem = function (ul, valor, checked) {
@@ -178,8 +252,35 @@ Br1AutoFilterBase.prototype.createListItem = function (ul, valor, checked) {
     return li;
 };
 
+Br1AutoFilterBase.prototype.getRangeFrom = function (cellIndex) {
+    if (!this.hasFilter(cellIndex) || this._filtros[cellIndex].length === 0)
+        return null;
+    else
+        return this._filtros[cellIndex][0];
+};
+
+Br1AutoFilterBase.prototype.getRangeTo = function (cellIndex) {
+    if (!this.hasFilter(cellIndex) || this._filtros.length === 0)
+        return null;
+    else
+        return this._filtros[cellIndex][1];
+};
+
 Br1AutoFilterBase.prototype.isValueInFilter = function (cellIndex, value) {
-    return !this.hasFilter(cellIndex) || this._filtros[cellIndex].indexOf(value) > -1;
+    if (!this.hasFilter(cellIndex))
+        return true;
+    else if (this._filterMode[cellIndex] === "range") {
+        let rowValue = value;
+        if (this._filterFormat[cellIndex] === "date")
+            rowValue = Br1Helper.strToDate(rowValue);
+
+        let rangeFrom = this.getRangeFrom(cellIndex);
+        let rangeTo = this.getRangeTo(cellIndex);
+        return (rangeFrom === null || rowValue >= rangeFrom)
+            && (rangeTo === null || rowValue <= rangeTo);
+    }
+    else
+        return this._filtros[cellIndex].indexOf(value) > -1;
 };
 
 Br1AutoFilterBase.prototype.hasFilter = function (cellIndex) {
