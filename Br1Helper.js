@@ -575,7 +575,11 @@
             
         return url + (url.indexOf('?') > 0 ? '&':'?') 
             + parameter + '=' + encodeURIComponent(value);
-    }    
+    },
+    
+    metodoDois: function() {
+        
+    }
 };
 
 
