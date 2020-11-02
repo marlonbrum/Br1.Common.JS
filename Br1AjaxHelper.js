@@ -1,6 +1,8 @@
 ﻿var Br1AjaxHelper = {
     rootUrl: "",
 
+    onLocalError: null,
+
     get: function (url, params, successCallback, errorCallback) {
         console.log(`ajax get ('${url}', ${JSON.stringify(params)})`);
         jQuery.getJSON(Br1AjaxHelper.getUrl(url), params,
@@ -8,7 +10,8 @@
                 Br1AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                Br1AjaxHelper._ajaxFail(jqXHR, textStatus, errorThrown, errorCallback);
+                Br1AjaxHelper._ajaxFail(jqXHR, textStatus, errorThrown,
+                    errorCallback, url, params);
             });
     },
 
@@ -20,7 +23,8 @@
                 Br1AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                Br1AjaxHelper._ajaxFail(jqXHR, textStatus, errorThrown, errorCallback);
+                Br1AjaxHelper._ajaxFail(jqXHR, textStatus, errorThrown, errorCallback,
+                    url, params);
             });
     },
 
@@ -36,7 +40,8 @@
             }
         })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                Br1AjaxHelper._ajaxFail(jqXHR, textStatus, errorThrown, errorCallback);
+                Br1AjaxHelper._ajaxFail(jqXHR, textStatus, errorThrown, errorCallback,
+                    url, formData);
             });
     },
 
@@ -65,13 +70,53 @@
             MsgBoxHelper.msgInfo(errorMessage);
     },
 
-    _ajaxFail: function (jqXHR, textStatus, errorThrown, errorCallback)
-    {
+    _ajaxFail: function (jqXHR, textStatus, errorThrown, errorCallback, url, params)
+    {       
         let errorMessage;
-        if (!Br1Helper.isNullOrEmpty(jqXHR.responseJSON) && !Br1Helper.isNullOrEmpty(jqXHR.responseJSON.ErrorMessage))
+        
+        if (!Br1Helper.isNullOrEmpty(jqXHR.responseJSON) && 
+            !Br1Helper.isNullOrEmpty(jqXHR.responseJSON.ErrorMessage))
+            // Se veio a propriedade errorMessage em JSON, entendo que o 
+            // erro foi tratado no servidor
             errorMessage = jqXHR.responseJSON.ErrorMessage;
-        else
+        else {
+            if (Br1AjaxHelper.onLocalError != null)
+            {                
+                let mensagem;
+
+                if (Br1Helper.isNullOrEmpty(errorThrown))
+                    mensagem = "Erro ao efetuar um request ajax";
+                else if (Br1Helper.isString(errorThrown))
+                    mensagem = errorThrown;
+                else if (!Br1Helper.isNullOrEmpty(errorThrown.message))
+                    mensagem = errorThrown.message;
+                else
+                    mensagem = errorThrown;
+                
+                let info = "HTTP Code = " + jqXHR.status + "\n"
+                            + "Response Text = " + jqXHR.responseText.maxSize(1000) + "\n"
+                            + "textStatus = " + textStatus + "\n";
+                
+                let sParametros = "";
+                if (params != null)
+                {
+                    for(let par in params)
+                        sParametros += par + "=" + params[par] + ", ";
+                    sParametros = sParametros.removeEnd(",", true);
+                }
+
+                let sStack = "";
+                if (Br1Helper.isNullOrEmpty(errorThrown) 
+                    || Br1Helper.isNullOrEmpty(errorThrown.stack))
+                    sStack = Error().stack;                    
+                else
+                    sStack = errorThrown.stack;
+
+                Br1AjaxHelper.onLocalError(mensagem, sStack, url, sParametros, info);
+            }        
+
             errorMessage = "Erro ao efetuar a solicitação ao servidor";
+        }
         console.error('ajax fail:' + errorMessage);
         Br1AjaxHelper._handleErrorMessage(errorMessage, errorCallback);
     },
