@@ -8,6 +8,14 @@
         MesAno: /^([1-9]|0[1-9]|1[0-2])\/(\d{2}|2\d{3})$/
     },
 
+    Masks: {
+        Telefone8Digitos: '(00) 0000-0000#',
+        Telefone9Digitos: '(00) 0 0000-0000',
+        Cpf: '000.000.000-00',
+        Data: '00/00/0000',
+        Hora: '00:00'
+    },
+
     hasValue: function (obj) {
         return obj !== null && typeof obj !== 'undefined';
     },
@@ -253,8 +261,7 @@
     },
 
     getPhoneMask: function (telefone) {
-        var masks = ['(00) 0000-0000#', '(00) 0 0000-0000'];
-        return (telefone.length > 10) ? masks[1] : masks[0];
+        return (telefone.length > 10) ? this.Masks.Telefone9Digitos : this.Masks.Telefone8Digitos;
     },
 
     maskPhone: function (input, dddPadrao) {
@@ -291,11 +298,11 @@
     },
 
     maskDate: function (input) {
-        input.mask("00/00/0000");
+        input.mask(this.Masks.Data);
     },
 
     maskTime: function (input) {
-        input.mask("00:00");
+        input.mask(this.Masks.Hora);
     },
 
     changeValue: function (input, valor) {
