@@ -13,7 +13,8 @@
         Telefone9Digitos: '(00) 0 0000-0000',
         Cpf: '000.000.000-00',
         Data: '00/00/0000',
-        Hora: '00:00'
+        Hora: '00:00',
+        CEP: '00000-000'
     },
 
     hasValue: function (obj) {
