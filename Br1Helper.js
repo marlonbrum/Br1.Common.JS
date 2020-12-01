@@ -320,6 +320,7 @@
             input.fireEvent("onchange");
     },
     
+    
     pesquisaCEP: function (cepInput, parentContainer) {
         cepInput.blur(function (event) {
             let cep = event.target.value.trim().replace("-", "");
