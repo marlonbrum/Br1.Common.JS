@@ -74,10 +74,24 @@ var Br1DomHelper = {
             select.options[i] = new Option(itens[i][1],itens[i][0]);        
     },
 
-
-    onDomReady(callback) {
+    onDomReady: function(callback) {
         document.addEventListener("DOMContentLoaded", function(event) {
             callback(event);
         });
+    },
+
+    onClick: function(container, selector, handler)
+    {
+        Br1DomHelper.addEvent(container, "click", selector, handler);
+    },
+
+    addEvent: function(container, eventName, selector, handler)
+    {
+        if (container == null)
+            container = document;
+        
+        let elements = container.querySelectorAll(selector);
+        for(let i=0; i < elements.length; i++)
+            elements[i].addEventListener(eventName, handler);
     }
 };
