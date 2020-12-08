@@ -85,6 +85,14 @@ var Br1DomHelper = {
         Br1DomHelper.addEvent(container, "click", selector, handler);
     },
 
+    /**
+     * Adiciona um handler de evento a todos os elementos do container que 
+     * atendam ao seletor.
+     * @param {*} container 
+     * @param {*} eventName 
+     * @param {*} selector 
+     * @param {*} handler 
+     */
     addEvent: function(container, eventName, selector, handler)
     {
         if (container == null)
