@@ -101,5 +101,17 @@ var Br1DomHelper = {
         let elements = container.querySelectorAll(selector);
         for(let i=0; i < elements.length; i++)
             elements[i].addEventListener(eventName, handler);
+    },
+
+    empty: function(element)
+    {
+        element.innerHtml = "";
+    },
+
+    create: function(tagName, className)
+    {
+        el = document.createElement(tagName);
+        el.classList.add(className);
+        return el;
     }
 };
