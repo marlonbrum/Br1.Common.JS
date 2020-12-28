@@ -1,39 +1,47 @@
 ﻿var MsgBoxHelper = {
 
+    MODAL_INFO: "modal-info",
+    MODAL_ERROR: "modal-error",
+    MODAL_WARNING: "modal-warning",
+    MODAL_QUESTION: "modal-question",
+
     msgInfo: function (msgText, callback) {
-        this.customMessage(msgText, ["OK"], callback);
+        this.customMessage(msgText, ["OK"], callback, this.MODAL_INFO);
+    },
+
+    msgError: function (msgText, callback) {
+        this.customMessage(msgText, ["OK"], callback, this.MODAL_ERROR);
+    },
+
+    msgWarning: function (msgText, callback) {
+        this.customMessage(msgText, ["OK"], callback, this.MODAL_WARNING);
     },
 
     msgAsk: function (msgText, callback) {
         this.customMessage(msgText, ["Sim", "Não"], function (button) {
             if (Br1Helper.isFunction(callback))
                 callback(button === 0);
-        });
+        }, this.MODAL_QUESTION);
     },
 
     msgConfirm: function (msgText, callback) {
         this.customMessage(msgText, ["OK", "Cancelar"], function (button) {
             if (Br1Helper.isFunction(callback))
                 callback(button === 0);
-        });
+        }, this.MODAL_QUESTION);
     },
 
-    customMessage: function (msg, buttons, callback) {
-        let msgBox = $(".message-box");
-               
-        if (msgBox.length === 0)
-        {
-            let sHtml = "<div class='modal message-box'>"
-                + "<div class='modal-content'></div>"
-                + "<div class='modal-footer'></div>"
-                // + "<a href='#!' class='modal-close waves-effect waves-green btn-flat'>Fechar</a>
-                + "</div>";
+    customMessage: function (msg, buttons, callback, contentClassName) {
+        let msgBox = $(".message-box");               
+        msgBox.remove();
 
+        let sHtml = `<div class='modal message-box ${contentClassName}'>
+                        <div class='modal-content'></div>
+                        <div class='modal-footer'></div>
+                    </div>`;
+        msgBox = $(sHtml);
 
-            msgBox = $(sHtml);
-
-            $("body").append(msgBox);            
-        }
+        $("body").append(msgBox);
 
         M.Modal.init(msgBox[0], {
             dismissible: false,
