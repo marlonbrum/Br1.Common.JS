@@ -387,6 +387,16 @@
             return false;
     },
 
+    formatarDinheiroDigitado: function(valorDigitado) {
+        valorDigitado = valorDigitado.replace(/[^\d,]/g, "");
+        valorDigitado = valorDigitado.replace(",", ".");
+        valorF = parseFloat(valorDigitado);
+        if (isNaN(valorF))
+            return "";
+        else
+            return valorF.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    },
+
     formatarDinheiro: function(valor) {
         if (typeof valor == "string")
             valor = parseFloat(valor);
