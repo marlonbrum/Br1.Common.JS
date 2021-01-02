@@ -387,10 +387,9 @@
             return false;
     },
 
-    formatarDinheiroDigitado: function(valorDigitado) {
-        valorDigitado = valorDigitado.replace(/[^\d,]/g, "");
-        valorDigitado = valorDigitado.replace(",", ".");
-        valorF = parseFloat(valorDigitado);
+    formatarDinheiroDigitado: function(valorDigitado) 
+    {
+        valorF = Br1Helper.strToFloat(valorDigitado);
         if (isNaN(valorF))
             return "";
         else
@@ -505,6 +504,10 @@
 
             return new Date(ano, mes - 1, dia);
         }
+    },
+
+    strToFloat: function(str) {
+        return parseFloat(str.replace(/[^\d,]/g, "").replace(",", "."));
     },
 
     dateToStr: function(date) {
