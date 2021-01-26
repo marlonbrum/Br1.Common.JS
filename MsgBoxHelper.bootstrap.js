@@ -20,7 +20,7 @@ var MsgBoxHelper = {
         });
     },
 
-    customMessage: function (msg, buttons, callback)
+    customMessage: function (msg, buttons, callback, opt)
     {
         var msgBox = $(".message-box");
         if (msgBox.length === 0)
@@ -37,7 +37,18 @@ var MsgBoxHelper = {
             $("body").append(msgBox);
         }
 
-        msgBox.find(".modal-body").html(msg);
+        let divContent = jQuery("<div class='message-content'>");
+        msgBox.find(".modal-body").append(divContent);
+
+        if (typeof msg === "string")
+        {
+            divContent.addClass("message-text");
+            divContent.text(msg);
+        }
+        else
+            divContent.append(jQuery(msg)); 
+
+        //msgBox.find(".modal-body").html(msg);
 
         var footer = msgBox.find(".modal-footer");
         footer.empty();
@@ -52,6 +63,10 @@ var MsgBoxHelper = {
                     .text(buttons[i])
                     .click(function (event) {
                         var clickedIndex = $(event.target).data("button-index");
+
+                        if (Br1Helper.isFunction(opt.onValidate))
+                            if (!opt.onValidate(idx, msgBox))
+                                return;
                         
                         msgBox.on('hidden.bs.modal', function (e) {
                             setTimeout(function () {

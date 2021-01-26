@@ -87,6 +87,8 @@ var MsgBoxHelper = {
             clickClose: false   
         });
 
+        document.querySelector(".blocker").style.zIndex = 3000;
+
         msgBox.unbind(jQuery.modal.AFTER_CLOSE);
 
         msgBox.bind(jQuery.modal.AFTER_CLOSE, function(event, modal) {
