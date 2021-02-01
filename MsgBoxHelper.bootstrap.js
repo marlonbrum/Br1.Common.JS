@@ -1,4 +1,14 @@
 var MsgBoxHelper = {
+    __defaultOptions: {
+        dialogClassName: "",
+        buttonClassName: "",
+        onValidate: null
+    },
+
+    setOptions(options) {
+        Object.assign(this.__defaultOptions, options);
+    },
+
     msgInfo: function (msgText, callback)
     {
         customMessage(msgText, ["OK"], callback);
@@ -20,24 +30,32 @@ var MsgBoxHelper = {
         });
     },
 
-    customMessage: function (msg, buttons, callback, opt)
+    customMessage: function (msg, buttons, callback, options)
     {
-        var msgBox = $(".message-box");
-        if (msgBox.length === 0)
-        {
-            msgBox =
-                $("<div>").addClass("modal").attr("role", "dialog")
-                    .append($("<div>").addClass("modal-dialog").attr("role", "document")
-                        .append($("<div>").addClass("modal-content")
-                            .append($("<div>").addClass("modal-body"))
-                            .append($("<div>").addClass("modal-footer"))
-                        )
-                    );
+        let opt = {};
+        Object.assign(opt, this.__defaultOptions);  
+        Object.assign(opt, options);
 
-            $("body").append(msgBox);
-        }
+
+        var msgBox = jQuery(".message-box");
+        if (msgBox.length > 0)
+            msgBox.remove();
+
+        msgBox =
+            jQuery("<div>").addClass("modal").addClass("message-box").attr("role", "dialog")
+                .append(jQuery("<div>").addClass("modal-dialog").attr("role", "document")
+                    .append(jQuery("<div>").addClass("modal-content")
+                        .append(jQuery("<div>").addClass("modal-body"))
+                        .append(jQuery("<div>").addClass("modal-footer"))
+                    )
+                );
+
+        jQuery("body").append(msgBox);
+    
+        msgBox.find(".modal-content").addClass(opt.dialogClassName);
 
         let divContent = jQuery("<div class='message-content'>");
+        
         msgBox.find(".modal-body").append(divContent);
 
         if (typeof msg === "string")
@@ -51,37 +69,53 @@ var MsgBoxHelper = {
         //msgBox.find(".modal-body").html(msg);
 
         var footer = msgBox.find(".modal-footer");
-        footer.empty();
-        for (var i = 0; i < buttons.length; i++)
+        
+        if (buttons === null || buttons.length == 0)
+        {
+            if (footer.length > 0)
+                footer.remove();
+        }
+        else
+        {
+            var footer = msgBox.find(".modal-footer");
+            footer.empty();
+            for (var i = 0; i < buttons.length; i++)
 
-            footer.append(
-                $("<button>")
-                    .attr("type", "button")
-                    .data("button-index", i)
-                    .addClass("btn btn-primary")
-                    .css({ minWidth: "90px" })
-                    .text(buttons[i])
-                    .click(function (event) {
-                        var clickedIndex = $(event.target).data("button-index");
+                footer.append(
+                    jQuery("<button>")
+                        .attr("type", "button")
+                        .data("button-index", i)
+                        .addClass("btn btn-primary")
+                        .addClass(opt.buttonClassName)
+                        .css({ minWidth: "90px" })
+                        .text(buttons[i])
+                        .click(function (event) {
+                            var clickedIndex = jQuery(event.target).data("button-index");
 
-                        if (Br1Helper.isFunction(opt.onValidate))
-                            if (!opt.onValidate(idx, msgBox))
-                                return;
-                        
-                        msgBox.on('hidden.bs.modal', function (e) {
-                            setTimeout(function () {
-                                if (isFunction(callback))
-                                    callback(clickedIndex);
-                            }, 100);                        
-                        });         
-                        msgBox.modal("hide");
-                    })
-            );
-
+                            if (Br1Helper.isFunction(opt.onValidate))
+                                if (!opt.onValidate(idx, msgBox))
+                                    return;
+                            
+                            msgBox.on('hidden.bs.modal', function (e) {
+                                setTimeout(function () {
+                                    if (isFunction(callback))
+                                        callback(clickedIndex);
+                                }, 100);                        
+                            });         
+                            msgBox.modal("hide");
+                        })
+                );
+        }
         
         msgBox.modal({
             backdrop: "static",
             show: true  
-        });        
+        });  
+        
+        return msgBox;
+    },
+
+    closeModal: function() {
+        jQuery(".message-box").modal("hide");
     }
 };

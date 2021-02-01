@@ -1,8 +1,12 @@
 var MsgBoxHelper = {
-    __defaultOptions: {},
+    __defaultOptions: {
+        dialogClassName: "",
+        buttonClassName: "",
+        onValidate: null
+    },
 
     setOptions(options) {
-        this.__defaultOptions = options;
+        Object.assign(this.__defaultOptions, options);
     },
 
     msgInfo: function (msgText, callback, options)
@@ -39,6 +43,7 @@ var MsgBoxHelper = {
             msgBox.addClass("message-box");
             jQuery(document.body).append(msgBox);
         }
+        msgBox.addClass(opt.dialogClassName);
 
         msgBox.empty();
         let divContent = jQuery("<div class='message-content'>");
@@ -52,33 +57,34 @@ var MsgBoxHelper = {
         else
             divContent.append(content); // TODO: Aqui estou passando um objeto puro, verificar se precisa ser Jquery
     
-        let buttonBar = jQuery("<div class='buttons'>");
-        msgBox.append(buttonBar);
-       
-
-        for (let i=0; i < buttons.length; i++)
+        if (buttons !== null && buttons.length > 0)
         {
-            let btn = jQuery("<button class='botao'>");
-            buttonBar.append(btn);
-            btn.text(buttons[i]);
-            btn.data("idx", i);
+            let buttonBar = jQuery("<div class='buttons'>");
+            msgBox.append(buttonBar);       
 
-            if (opt !== undefined && opt.buttonClass !== undefined)
-                btn.addClass(opt.buttonClass);
+            for (let i=0; i < buttons.length; i++)
+            {
+                let btn = jQuery("<button class='botao'>");
+                buttonBar.append(btn);
+                btn.text(buttons[i]);
+                btn.data("idx", i);
 
-            btn.click(function(event) {
-                let botao = jQuery(event.target);
-                let idx = botao.data("idx");
-                let msgBox = botao.closest(".message-box");
+                btn.addClass(opt.buttonClassName);
 
-                if (Br1Helper.isFunction(opt.onValidate))
-                    if (!opt.onValidate(idx, msgBox))
-                        return;
-                
-                botao.closest(".message-box").data("button_idx", idx); 1
+                btn.click(function(event) {
+                    let botao = jQuery(event.target);
+                    let idx = botao.data("idx");
+                    let msgBox = botao.closest(".message-box");
 
-                jQuery.modal.close();     
-            });
+                    if (Br1Helper.isFunction(opt.onValidate))
+                        if (!opt.onValidate(idx, msgBox))
+                            return;
+                    
+                    botao.closest(".message-box").data("button_idx", idx); 1
+
+                    jQuery.modal.close();     
+                });
+            }
         }
     
         msgBox.modal({ 
@@ -97,6 +103,13 @@ var MsgBoxHelper = {
                 if(callback != null)
                     callback(idx, msgBox);
             }, 100);
-        });       
+        });    
+        
+        return msgBox;
+    },
+
+    closeModal: function()
+    {
+        jQuery.modal.close();
     }
 };
