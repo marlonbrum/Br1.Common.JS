@@ -12,6 +12,7 @@
         Telefone8Digitos: '(00) 0000-0000#',
         Telefone9Digitos: '(00) 0 0000-0000',
         Cpf: '000.000.000-00',
+        Cnpj: '00.000.000/0000-00',
         Data: '00/00/0000',
         Hora: '00:00',
         CEP: '00000-000'
@@ -611,6 +612,36 @@
             
         return url + (url.indexOf('?') > 0 ? '&':'?') 
             + parameter + '=' + encodeURIComponent(value);
+    },
+
+    applyMask: function(value, mask)
+    {
+        let v = Br1Helper.stripNonDigits(value);
+        
+        let iValor = 0;
+        let iMask = 0;
+        
+        let resultado = "";
+        while (iValor < v.length)
+        {
+            if (mask[iMask] == "0" || mask[iMask] == "9")
+                resultado += v[iValor++];                
+            else if (iMask < mask.length)
+                resultado += mask[iMask];
+            iMask++;
+        }
+
+        return resultado;
+    },
+
+    formatarCPF: function(valor)
+    {
+        return Br1Helper.applyMask(valor, Br1Helper.Masks.Cpf);
+    },
+
+    formatarCNPJ: function(valor)
+    {
+        return Br1Helper.applyMask(valor, Br1Helper.Masks.Cnpj);
     }
 };
 

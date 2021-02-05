@@ -1,9 +1,19 @@
-﻿var MsgBoxHelper = {
-
+﻿var MsgBoxHelper = {    
     MODAL_INFO: "modal-info",
     MODAL_ERROR: "modal-error",
     MODAL_WARNING: "modal-warning",
     MODAL_QUESTION: "modal-question",
+
+    __defaultOptions: {
+        dialogClassName: "",
+        buttonClassName: "",
+        onValidate: null,
+        beforeShow: null
+    },
+
+    setOptions(options) {
+        Object.assign(this.__defaultOptions, options);
+    },
 
     msgInfo: function (msgText, callback) {
         this.customMessage(msgText, ["OK"], callback, this.MODAL_INFO);
@@ -31,11 +41,16 @@
         }, this.MODAL_QUESTION);
     },
 
-    customMessage: function (msg, buttons, callback, contentClassName) {
+    customMessage: function (msg, buttons, callback, options) 
+    {
+        let opt = {};
+        Object.assign(opt, this.__defaultOptions);  
+        Object.assign(opt, options);
+
         let msgBox = $(".message-box");               
         msgBox.remove();
 
-        let sHtml = `<div class='modal message-box ${contentClassName}'>
+        let sHtml = `<div class='modal message-box ${opt.dialogClassName}'>
                         <div class='modal-content'></div>
                         <div class='modal-footer'></div>
                     </div>`;
@@ -62,15 +77,28 @@
                     .attr("href", "#!")
                     .data("button-index", i)
                     .addClass("modal-close waves-effect waves-green btn-flat")
+                    .addClass(opt.buttonClassName)
                     .text(buttons[i])
                     .click(function (event) {
                         let clickedIndex = $(event.target).data("button-index");
                         let modalMsgBox = $(event.target).closest(".message-box");
+
+                        if (Br1Helper.isFunction(opt.onValidate))
+                            if (!opt.onValidate(clickedIndex, modalMsgBox[0]))
+                            {
+                                event.preventDefault();
+                                return false;
+                            }
+
                         modalMsgBox.data("clickedIndex", clickedIndex);
                     })
             );        
 
         let instance = M.Modal.getInstance(msgBox[0]);
+
+        if (Br1Helper.isFunction(opt.beforeShow))
+            opt.beforeShow(msgBox[0]);
+
         instance.open();
     }
 };

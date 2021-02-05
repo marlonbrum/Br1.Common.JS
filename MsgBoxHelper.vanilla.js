@@ -2,7 +2,8 @@ var MsgBoxHelper = {
     __defaultOptions: {
         dialogClassName: "",
         buttonClassName: "",
-        onValidate: null
+        onValidate: null,
+        beforeShow: null
     },
 
     setOptions(options) {
@@ -86,6 +87,9 @@ var MsgBoxHelper = {
                 });
             }
         }
+
+        if (Br1Helper.isFunction(opt.beforeShow))
+            Br1Helper.beforeShow();
     
         msgBox.modal({ 
             showClose: false,

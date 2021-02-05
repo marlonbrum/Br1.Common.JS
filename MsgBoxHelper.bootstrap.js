@@ -2,7 +2,8 @@ var MsgBoxHelper = {
     __defaultOptions: {
         dialogClassName: "",
         buttonClassName: "",
-        onValidate: null
+        onValidate: null,
+        beforeShow: null
     },
 
     setOptions(options) {
