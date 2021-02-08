@@ -323,17 +323,17 @@
     
     
     pesquisaCEP: function (cepInput, parentContainer) {
-        cepInput.blur(function (event) {
+        cepInput.addEventListener("blur", event => {
             let cep = event.target.value.trim().replace("-", "");
             if (cep.length == 8) {
                 let url = "https://viacep.com.br/ws/" + cep + "/json/";
                 jQuery.getJSON(url, null, function (retorno) {
                     if (!retorno.erro)
                     {
-                        Br1Helper.changeValue(document.querySelector(".logradouro input"), retorno.logradouro);
-                        Br1Helper.changeValue(document.querySelector(".bairro input"), retorno.bairro);
-                        Br1Helper.changeValue(document.querySelector(".cidade input"), retorno.localidade);
-                        Br1Helper.changeValue(document.querySelector(".uf select"), retorno.uf);
+                        Br1Helper.changeValue(parentContainer.querySelector(".logradouro input"), retorno.logradouro);
+                        Br1Helper.changeValue(parentContainer.querySelector(".bairro input"), retorno.bairro);
+                        Br1Helper.changeValue(parentContainer.querySelector(".cidade input"), retorno.localidade);
+                        Br1Helper.changeValue(parentContainer.querySelector(".uf select"), retorno.uf);
                     }
                 });
             }
