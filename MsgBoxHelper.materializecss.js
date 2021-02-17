@@ -7,6 +7,7 @@
     __defaultOptions: {
         dialogClassName: "",
         buttonClassName: "",
+        title: "",
         onValidate: null,
         beforeShow: null
     },
@@ -16,29 +17,48 @@
     },
 
     msgInfo: function (msgText, callback) {
-        this.customMessage(msgText, ["OK"], callback, this.MODAL_INFO);
+        let opt = {dialogClassName: this.MODAL_INFO};
+        if (options !== null && options !== undefined)
+            Object.assign(opt, options);
+
+        this.customMessage(msgText, ["OK"], callback, opt);
     },
 
-    msgError: function (msgText, callback) {
-        this.customMessage(msgText, ["OK"], callback, this.MODAL_ERROR);
+    msgError: function (msgText, callback, options) {
+        let opt = {dialogClassName: this.MODAL_ERROR};
+        if (options !== null && options !== undefined)
+            Object.assign(opt, options);
+        this.customMessage(msgText, ["OK"], callback, opt);
     },
 
-    msgWarning: function (msgText, callback) {
-        this.customMessage(msgText, ["OK"], callback, this.MODAL_WARNING);
+    msgWarning: function (msgText, callback, options) {
+        let opt = {dialogClassName: this.MODAL_WARNING};
+        if (options !== null && options !== undefined)
+            Object.assign(opt, options);
+
+        this.customMessage(msgText, ["OK"], callback, opt);
     },
 
-    msgAsk: function (msgText, callback) {
+    msgAsk: function (msgText, callback, options) {
+        let opt = {dialogClassName: this.MODAL_QUESTION};
+        if (options !== null && options !== undefined)
+            Object.assign(opt, options);
+
         this.customMessage(msgText, ["Sim", "Não"], function (button) {
             if (Br1Helper.isFunction(callback))
                 callback(button === 0);
-        }, this.MODAL_QUESTION);
+        }, opt);
     },
 
-    msgConfirm: function (msgText, callback) {
+    msgConfirm: function (msgText, callback, options) {
+        let opt = {dialogClassName: this.MODAL_QUESTION};
+        if (options !== null && options !== undefined)
+            Object.assign(opt, options);
+
         this.customMessage(msgText, ["OK", "Cancelar"], function (button) {
             if (Br1Helper.isFunction(callback))
                 callback(button === 0);
-        }, this.MODAL_QUESTION);
+        }, opt);
     },
 
     customMessage: function (msg, buttons, callback, options) 
@@ -67,7 +87,13 @@
             }
         });
 
-        msgBox.find(".modal-content").html(msg);
+        let contentBody = "";
+        if (opt.title != "")
+            contentBody += `<h1 class='modal-header'>${opt.title}</h1>`;
+        contentBody += `<div class='modal-content-body'></div>`;
+                
+        msgBox.find(".modal-content").html(contentBody);
+        msgBox.find(".modal-content-body").append(msg);
 
         var footer = msgBox.find(".modal-footer");
         footer.empty();
