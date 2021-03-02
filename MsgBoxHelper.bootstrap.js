@@ -12,12 +12,12 @@ var MsgBoxHelper = {
 
     msgInfo: function (msgText, callback)
     {
-        customMessage(msgText, ["OK"], callback);
+        MsgBoxHelper.customMessage(msgText, ["OK"], callback);
     },
 
     msgAsk: function (msgText, callback)
     {
-        customMessage(msgText, ["Sim", "Não"], function (button) {
+        MsgBoxHelper.customMessage(msgText, ["Sim", "Não"], function (button) {
             if (isFunction(callback))
                 callback(button === 0);
         });
@@ -25,7 +25,7 @@ var MsgBoxHelper = {
 
     msgConfirm: function (msgText, callback)
     {   
-        customMessage(msgText, ["OK", "Cancelar"], function (button) {
+        MsgBoxHelper.customMessage(msgText, ["OK", "Cancelar"], function (button) {
             if (isFunction(callback))
                 callback(button === 0);
         });
@@ -99,7 +99,7 @@ var MsgBoxHelper = {
                             
                             msgBox.on('hidden.bs.modal', function (e) {
                                 setTimeout(function () {
-                                    if (isFunction(callback))
+                                    if ( callback !== null && typeof callback !== 'undefined')
                                         callback(clickedIndex);
                                 }, 100);                        
                             });         
