@@ -16,7 +16,7 @@
         Object.assign(this.__defaultOptions, options);
     },
 
-    msgInfo: function (msgText, callback) {
+    msgInfo: function (msgText, callback, options) {
         let opt = {dialogClassName: this.MODAL_INFO};
         if (options !== null && options !== undefined)
             Object.assign(opt, options);
