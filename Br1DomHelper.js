@@ -113,5 +113,33 @@ var Br1DomHelper = {
         el = document.createElement(tagName);
         el.classList.add(className);
         return el;
+    },
+
+    /**
+     * Esconde o container Informado e desabilita todos os inputs  e selects
+     * dentro dele (Para não serem validados)
+     * @param {HTMLElement} container 
+     */
+    hideAndDisable: function(container)
+    {
+        container.style.display = "none";
+        
+        container.querySelectorAll("input, select")
+            .forEach(el => el.disabled = true);
+    },
+
+    /**
+         * Exibe o container informado e habilita todos os inputs  e selects
+         * dentro dele
+         * @param {HTMLElement} container
+         * @param {string} valor da propriedade display a ser definida 
+         */
+    showAndEnable: function(container, displayType = "block")
+    {
+        container.style.display = "block";
+        
+        container.querySelectorAll("input, select")
+            .forEach(el => el.disabled = false);
     }
+
 };
