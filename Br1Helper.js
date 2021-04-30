@@ -23,7 +23,7 @@
     },
 
     isFunction: function (fn) {
-        return this.hasValue(fn);
+        return fn !== null && fn instanceof Function;
     },
 
     isNullOrEmpty: function (str) {
