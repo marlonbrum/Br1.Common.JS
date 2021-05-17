@@ -622,7 +622,7 @@
         let iMask = 0;
         
         let resultado = "";
-        while (iValor < v.length)
+        while (iValor < v.length && iMask < mask.length)
         {
             if (mask[iMask] == "0" || mask[iMask] == "9")
                 resultado += v[iValor++];                
