@@ -93,8 +93,12 @@
                 else
                     mensagem = errorThrown;
                 
+                let sRespText = "";
+                if (!Br1Helper.isNullOrEmpty(jqXHR.responseText))
+                    sRespText = jqXHR.responseText.maxSize(1000);
+                
                 let info = "HTTP Code = " + jqXHR.status + "\n"
-                            + "Response Text = " + jqXHR.responseText.maxSize(1000) + "\n"
+                            + "Response Text = " + sRespText + "\n"
                             + "textStatus = " + textStatus + "\n";
                 
                 let sParametros = "";

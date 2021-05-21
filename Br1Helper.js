@@ -23,7 +23,7 @@
     },
 
     isFunction: function (fn) {
-        return this.hasValue(fn);
+        return fn !== null && fn instanceof Function;
     },
 
     isNullOrEmpty: function (str) {
@@ -622,7 +622,7 @@
         let iMask = 0;
         
         let resultado = "";
-        while (iValor < v.length)
+        while (iValor < v.length && iMask < mask.length)
         {
             if (mask[iMask] == "0" || mask[iMask] == "9")
                 resultado += v[iValor++];                

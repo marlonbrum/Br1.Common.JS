@@ -75,9 +75,15 @@ var Br1DomHelper = {
     },
 
     onDomReady: function(callback) {
-        document.addEventListener("DOMContentLoaded", function(event) {
-            callback(event);
-        });
+        if (document.readyState === "complete" 
+            || document.readyState === "loaded" 
+            || document.readyState === "interactive") {
+                callback();
+        }
+        else
+            document.addEventListener("DOMContentLoaded", function(event) {
+                callback(event);
+            });
     },
 
     onClick: function(container, selector, handler)
