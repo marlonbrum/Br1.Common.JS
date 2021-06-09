@@ -109,9 +109,13 @@ var Br1DomHelper = {
             elements[i].addEventListener(eventName, handler);
     },
 
+    /**
+     * Limpa o elemento informado
+     * @param {HTMLElement} element 
+     */
     empty: function(element)
     {
-        element.innerHtml = "";
+        element.innerHTML = "";
     },
 
     create: function(tagName, className)
@@ -146,6 +150,16 @@ var Br1DomHelper = {
         
         container.querySelectorAll("input, select")
             .forEach(el => el.disabled = false);
+    },
+
+    elementIndex: function(el) 
+    {
+        var i=0;
+        while(el.previousElementSibling ) {
+            el=el.previousElementSibling;
+            i++;
+        }
+        return i;    
     }
 
 };

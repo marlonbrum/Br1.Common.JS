@@ -399,10 +399,17 @@
     },
 
     formatarDinheiro: function(valor) {
+        return Br1Helper.formatarFloat(valor, 2);
+	},
+
+    formatarFloat: function(valor, casasDecimais) {
         if (typeof valor == "string")
             valor = parseFloat(valor);
             
-        return valor.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return valor.toLocaleString("pt-BR", { 
+            minimumFractionDigits: casasDecimais, 
+            maximumFractionDigits: casasDecimais
+        });
 	},
 
     validarCNPJ: function (cnpj) {
@@ -522,6 +529,25 @@
     isDigit: function(char)
     {
         return char >= '0' && char <= '9';
+    },
+
+    formatarTamanhoBytes: function(tamanho) {
+        if (tamanho < 1024)
+            return Br1Helper.formatarFloat(tamanho, 0) + " B";
+        else {
+            tamanho = tamanho / 1024.0;
+            if (tamanho < 1024)
+                return Br1Helper.formatarFloat(tamanho, 1) + " KB";
+            else
+            {
+                tamanho = tamanho / 1024.0;
+                if (tamanho < 1024)
+                    return Br1Helper.formatarFloat(tamanho, 1) + " MB";
+                else
+                    return Br1Helper.formatarFloat(tamanho / 1024.0, 1) + " GB";
+            }
+        }
+        return tamanho;
     },
 
     formatarNumero : function(entrada, mascara)
