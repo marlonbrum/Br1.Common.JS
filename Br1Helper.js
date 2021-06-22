@@ -403,6 +403,9 @@
 	},
 
     formatarFloat: function(valor, casasDecimais) {
+        if (valor === null)
+            return "";
+            
         if (typeof valor == "string")
             valor = parseFloat(valor);
             
