@@ -1,15 +1,20 @@
-﻿var MsgBoxHelper = {    
+﻿
+var MsgBoxHelper = {    
     MODAL_INFO: "modal-info",
     MODAL_ERROR: "modal-error",
     MODAL_WARNING: "modal-warning",
     MODAL_QUESTION: "modal-question",
+    MAXIMIZE: 5000,
+
+    observer: null,
 
     __defaultOptions: {
         dialogClassName: "",
         buttonClassName: "",
         title: "",
         onValidate: null,
-        beforeShow: null
+        beforeShow: null,
+        modalHeight: 500
     },
 
     setOptions(options) {
@@ -70,7 +75,7 @@
         let msgBox = $(".message-box");               
         msgBox.remove();
 
-        let sHtml = `<div class='modal message-box ${opt.dialogClassName}'>
+        let sHtml = `<div class='modal modal-fixed-footer message-box ${opt.dialogClassName}'>
                         <div class='modal-content'></div>
                         <div class='modal-footer'></div>
                     </div>`;
@@ -78,8 +83,15 @@
 
         $("body").append(msgBox);
 
+        // msgBox[0].dataset.modalHeight = opt.modalHeight;
+        let sTop = "";
+        let mHeight = Math.min(opt.modalHeight, window.innerHeight - 100);
+        sTop = Math.floor((window.innerHeight - mHeight) / 2) + "px";
+        msgBox[0].style.height = mHeight + "px";
+
         M.Modal.init(msgBox[0], {
             dismissible: false,
+            endingTop: sTop,
             onCloseEnd: function () {
                 let clickedIndex = parseInt(msgBox.data("clickedIndex"), 10);
                 if (Br1Helper.isFunction(callback))
@@ -123,8 +135,42 @@
         let instance = M.Modal.getInstance(msgBox[0]);
 
         if (Br1Helper.isFunction(opt.beforeShow))
-            opt.beforeShow(msgBox[0]);
+           opt.beforeShow(msgBox[0]);
+
+        MsgBoxHelper.centralizar(msgBox[0]);   
+        //MsgBoxHelper.observeElement(msgBox[0]);
+
+        msgBox[0].querySelector(".modal-content-body").style.minHeight = (mHeight - 147) + "px";
 
         instance.open();
+    },
+
+    observeElement: function(element) {
+        if (MsgBoxHelper.observer == null)
+            MsgBoxHelper.observer = new ResizeObserver(MsgBoxHelper.centralizar);
+        MsgBoxHelper.observer.observe(element);
+    },
+
+    unobserveElement: function(element) {
+        if (MsgBoxHelper.observer !== null)
+            MsgBoxHelper.observer.unobserve(element);
+    },
+
+    centralizar: function(mb) 
+    {
+        let modalHeight = mb.dataset.modalHeight;
+
+        if (modalHeight > (screen.availHeight - 100))
+        {
+            mb.style.top = "50px";
+            mb.style.bottom = "50px";
+            mb.style.height = "";
+        }
+        else
+        {
+            let top = Math.floor((screen.availHeight - modalHeight) / 2);
+            mb.style.top = top + "px";                
+            mb.style.height = modalHeight + "px";
+        }        
     }
 };
