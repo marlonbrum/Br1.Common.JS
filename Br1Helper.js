@@ -267,6 +267,12 @@
         return (telefone.length > 10) ? this.Masks.Telefone9Digitos : this.Masks.Telefone8Digitos;
     },
 
+    /**
+     * Aplica a máscara de telefone ao input informado (Usa jQuery)
+     * 
+     * @param {HTMLElement} input Objeto JQuery com o input na qual a máscara deve ser aplicada
+     * @param {string} DDD que será utilizado se não foi digitado pelo usuário
+     */
     maskPhone: function (input, dddPadrao) {
         var optTelefone = {
             onKeyPress: function (telefone, e, field, options) {
