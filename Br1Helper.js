@@ -679,16 +679,57 @@
         return Br1Helper.applyMask(valor, Br1Helper.Masks.Cnpj);
     },
 
-    formatarDocumento: function(valor)
+    /**
+     * Verifica se o valor passado é um CPF ou CNPJ. 
+     * Essa função decide isso contando a quantidade de dígitos numéricos 
+     * presentes. 
+     */
+    identificarDocumento: function(valor)
     {
-        let doc = Br1Helper.stripNonDigits(valor);
-        if (doc.length == 11)
-            return Br1Helper.formatarCPF(doc);
-        else if (doc.length == 14)
-            return Br1Helper.formatarCNPJ(doc);
+        valor = Br1Helper.stripNonDigits(valor);
+        if (valor.length == 11)
+            return "cpf";
+        else if (valor.length == 14)
+            return "cnpj";
         else
-            return valor;
+            return null;
+    },
+
+    /**
+     * Formata o documento passado como CPF ou CNPJ, de acordo com a 
+     * quantidade de dígitos
+     * @param {string} documento Documento a ser formatado , com ou sem '.' e '-'
+     */ 
+    formatarDocumento: function(documento)
+    {
+        switch(Br1Helper.identificarDocumento(documento))
+        {
+            case "cpf": 
+               return Br1Helper.formatarCPF(documento);
+            case "cnpj":
+                return Br1Helper.formatarCNPJ(documento);
+            default:
+                return documento;
+        }
+    },
+
+    /**
+     * Informa se o documento passado como parâmetro é um CPF ou CNPJ válido.
+     * @param {string} documento Documento a ser validado , com ou sem '.' e '-'
+     */ 
+    validarDocumento: function(documento)
+    {
+        switch(Br1Helper.identificarDocumento(documento))
+        {
+            case "cpf": 
+               return Br1Helper.validarCPF(documento);
+            case "cnpj":
+                return Br1Helper.validarCNPJ(documento);
+            default:
+                return false;
+        }
     }
+
 };
 
 
