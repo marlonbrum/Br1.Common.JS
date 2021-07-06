@@ -1,5 +1,8 @@
 var Br1Modal = {
 
+    MODAL_CLASS: "br1-modal-dialog",
+    OVERLAY_CLASS: "br1-modal-dialog-overlay",
+
     __defaultOptions: {
         dialogClassName: "",
         closeOnClickOutside: false,
@@ -28,7 +31,7 @@ var Br1Modal = {
         Object.assign(opt, options);
 
         // Cria o overlay, camada semi-transparente que fica embaixo do modal.
-        let modalOverlay = Br1Modal.getDiv("modal-dialog-overlay");
+        let modalOverlay = Br1Modal.getDiv(Br1Modal.OVERLAY_CLASS);
 
         modalOverlay.style.cssText = `
             position: absolute;
@@ -42,7 +45,7 @@ var Br1Modal = {
         `;
 
         // Cria a message box
-        let modalBox = Br1Modal.getDiv("modal-dialog");
+        let modalBox = Br1Modal.getDiv(Br1Modal.MODAL_CLASS);
         if (opt.dialogClassName != "")
             modalBox.classList.add(opt.dialogClassName);
         modalBox.style.cssText = `
@@ -63,11 +66,11 @@ var Br1Modal = {
 
     closeModal: function()
     {
-        let msgBoxOverlay = document.querySelector(".modal-dialog-overlay");
+        let msgBoxOverlay = document.querySelector("." + Br1Modal.OVERLAY_CLASS);
         if (msgBoxOverlay !== null)
             msgBoxOverlay.remove();
 
-        let msgBox = document.querySelector(".modal-dialog");
+        let msgBox = document.querySelector("." + Br1Modal.MODAL_CLASS);
         if (msgBox !== null)
             msgBox.remove();
     }
