@@ -152,6 +152,12 @@ var Br1DomHelper = {
             .forEach(el => el.disabled = false);
     },
 
+    show: function(selector, visible, displayType = "block")
+    {
+        document.querySelectorAll(selector)
+            .forEach(el => el.style.display = visible ? displayType : "none");
+    },
+
     elementIndex: function(el) 
     {
         var i=0;
