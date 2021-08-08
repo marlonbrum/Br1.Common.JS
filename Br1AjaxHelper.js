@@ -106,7 +106,8 @@
                 {
                     for(let par in params)
                         sParametros += par + "=" + params[par] + ", ";
-                    sParametros = sParametros.removeEnd(",", true);
+
+                   /// sParametros = sParametros.removeEnd(",", true);
                 }
 
                 let sStack = "";
