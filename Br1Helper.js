@@ -728,6 +728,12 @@
             default:
                 return false;
         }
+    },
+
+    arredondar: function(valor, casasDecimais)
+    {
+        let fator = Math.pow(10, casasDecimais);
+        return Math.round(valor * fator) / fator;
     }
 
 };
