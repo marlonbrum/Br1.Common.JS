@@ -86,25 +86,25 @@ var Br1DomHelper = {
             });
     },
 
-    onClick: function(container, selector, handler)
+    onClick: function(selector, handler, container)
     {
-        Br1DomHelper.addEvent(container, "click", selector, handler);
+        Br1DomHelper.addEvent("click", selector, handler, container);
     },
 
-    onChange: function(container, selector, handler)
+    onChange: function(selector, handler, container)
     {
-        Br1DomHelper.addEvent(container, "change", selector, handler);
+        Br1DomHelper.addEvent("change", selector, handler, container);
     },
 
     /**
      * Adiciona um handler de evento a todos os elementos do container que 
      * atendam ao seletor.
-     * @param {*} container 
      * @param {*} eventName 
      * @param {*} selector 
      * @param {*} handler 
+     * @param {*} container 
      */
-    addEvent: function(container, eventName, selector, handler)
+    addEvent: function(eventName, selector, handler, container)
     {
         if (container == null)
             container = document;

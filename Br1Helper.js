@@ -734,6 +734,34 @@
     {
         let fator = Math.pow(10, casasDecimais);
         return Math.round(valor * fator) / fator;
+    },
+
+    /**
+     * Substitui os campos presentes na string, separados pelos delimitadores
+     * usando o valor retornado pela função passada
+     * @param {string} texto Texto a ser tratado
+     * @param {CallableFunction} funcaoValor Função que será chamada a cada campo encontrado para obter o valor.
+     * @param {string} delimitadorInicio Delimitador inicial de campo. Valor Padrão: [
+     * @param {string} delimitadorFim Delimitador final de campo. Valor Padrão: ]
+     * 
+     */
+    replaceFields: function(texto, funcaoValor, delimitadorInicio = '[', delimitadorFim = ']')
+    {
+        let textoAlterado = "";
+        let iPosInicio = 0;
+        let iPosFim = 0;
+
+        while ((iPosInicio = texto.indexOf(delimitadorInicio, iPosInicio + 1)) >= 0)
+        {
+            textoAlterado += texto.substr(iPosFim, iPosInicio - iPosFim);
+            iPosFim = texto.indexOf(delimitadorFim, iPosInicio);
+            let campo = texto.substr(iPosInicio + 1, iPosFim - iPosInicio - 1);
+            let valor = funcaoValor(campo);
+            textoAlterado += valor;
+        }
+
+        textoAlterado += texto.substr(iPosFim);
+        return textoAlterado;
     }
 
 };
