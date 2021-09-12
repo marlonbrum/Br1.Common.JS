@@ -4,17 +4,7 @@ var Br1DomHelper = {
             element.removeChild(element.firstChild);
     },
 
-    append: function(parent, elementName, className, text)
-    {
-        let el = document.createElement(elementName);
-        if (!Br1Helper.isNullOrEmpty(className))
-            el.classList.add(className);
-
-        if (!Br1Helper.isNullOrEmpty(text))
-            el.innerText = text;
-
-        return el;
-    },
+    
 
     generateOptionsHtml: function(optionsArray, selectedValue, emptyItem)
     {
@@ -171,6 +161,21 @@ var Br1DomHelper = {
             i++;
         }
         return i;    
+    },
+
+    /**
+     * Insere o novo elemento logo após o elemento passado como referência
+     * @param {HTMLElement} previousElement 
+     * @param {HTMLElement} newElement 
+     */
+    insertAfter: function(previousElement, newElement)
+    {
+        let next = previousElement.nextElementSibling;
+        if (next == null)
+            previousElement.parentElement.appendChild(newElement);
+        else
+            previousElement.parentElement.insertBefore(newElement, next);
+
     }
 
 };
