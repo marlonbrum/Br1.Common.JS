@@ -2,7 +2,7 @@ on:
   push:
     branches:
       - kareca
-name: 🚀 Deploy da Common.JS para o sistema do Kareca
+name: 🚀 Deploy [Kareca Espumas]
 jobs:
   web-deploy:
     name: 🎉 Deploy
