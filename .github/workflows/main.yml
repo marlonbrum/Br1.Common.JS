@@ -1,0 +1,28 @@
+on: 
+  push:
+    branches:
+      - kareca
+name: 🚀 Deploy da Common.JS para o sistema do Kareca
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v2
+    
+    - name: 📂 Subir para Produção (Brás)
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      with:
+        server: ftp.karecaespumas.com.br
+        username: karecaespumas1
+        password: KarecaEspumas.01
+        server-dir: public_html/js/Br1.Common.JS
+        
+    - name: 📂 Subir para Produção (Atibaia)
+      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      with:
+        server:  ftp.atibaia.karecaespumas.com.br
+        username: atibaiakarecaesp1
+        password: KarecaEspumas.01
+        server-dir: public_html/js/Br1.Common.JS
