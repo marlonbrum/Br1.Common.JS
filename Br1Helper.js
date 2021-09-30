@@ -649,6 +649,18 @@
             + parameter + '=' + encodeURIComponent(value);
     },
 
+    /**
+     * Aplica a máscara ao texto informado. Antes de aplicar a máscara, a função irá 
+     * remover do texto de origem todos os caracteres que não sejam digitos. 
+     * 
+     * Ex: 
+     * applyMask('12345678901', '999.999.999-99') => '123.456.789-01'
+     * applyMask('123*456*789*01', '999.999.999-99') => '123.456.789-01'
+     * 
+     * @param {string} value Valor a ser formatado
+     * @param {string} mask Máscara a ser aplicada, use '9' ou '0' para indicar os dígitos
+     * @returns Retorna o valor formatado
+     */
     applyMask: function(value, mask)
     {
         let v = Br1Helper.stripNonDigits(value);
