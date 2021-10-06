@@ -47,7 +47,11 @@ var Br1Modal = {
         // Cria a message box
         let modalBox = Br1Modal.getDiv(Br1Modal.MODAL_CLASS);
         if (opt.dialogClassName != "")
-            modalBox.classList.add(opt.dialogClassName);
+        {
+            opt.dialogClassName
+                .split(' ')
+                .forEach(cl => modalBox.classList.add(cl));
+        }
         modalBox.style.cssText = `
             position: absolute;
             background-color: white;
