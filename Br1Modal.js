@@ -5,9 +5,12 @@ var Br1Modal = {
 
     __defaultOptions: {
         dialogClassName: "",
+        showCloseButton: true,
         closeOnClickOutside: false,
-        closeOnEscape: false
+        closeOnEscape: false        
     },
+
+    onDialogClose: null,
 
     setOptions(options) {
         Object.assign(this.__defaultOptions, options);
@@ -54,28 +57,75 @@ var Br1Modal = {
         }
         modalBox.style.cssText = `
             position: absolute;
-            background-color: white;
-            top: 50%;
-            left: 50%;
+            background-color: white;            
             z-index: 3001;
         `;
 
         modalBox.innerHTML = "";
+        if (opt.showCloseButton)
+        {
+            modalBox.innerHTML = 
+                `<a href="#" class='modal-fechar' title='Fechar essa janela'
+                    style='position: absolute; right: 5px; top: 5px; padding: 0px;'>
+					<img src='${Br1Login.getGlobalVars().BaseUrl}images/close-circle-gray.png' />
+				</a>`;
+        }
         modalBox.appendChild(content);
 
-        modalBox.style.marginLeft = "-" + (modalBox.clientWidth / 2) + "px";
-        modalBox.style.marginTop = "-" + (modalBox.clientHeight / 2) + "px";
+        modalBox.querySelector('.modal-fechar').addEventListener('click', Br1Modal.closeButtonClick);
 
+        Br1Modal.updateSize(modalBox);
+
+    },
+
+    updateSize: function(modalBox)
+    {
+        if (modalBox.clientWidth > (window.innerWidth - 10))
+        {
+            modalBox.style.left = "0px";
+            modalBox.style.marginLeft = "0px";
+        }
+        else
+        {
+            modalBox.style.left = "50%";
+            modalBox.style.marginLeft = "-" + (modalBox.clientWidth / 2) + "px";
+        }
+    
+        if (modalBox)
+
+        if (modalBox.clientHeight > window.innerHeight)
+        {
+            modalBox.style.top = "0px";
+            modalBox.style.marginTop = "0px";
+        }
+        else
+        {
+            modalBox.style.top = "50%";
+            modalBox.style.marginTop = "-" + (modalBox.clientHeight / 2) + "px";
+        }
+    },
+
+    closeButtonClick: function(event)
+    {
+        Br1Modal.closeModal();
+        event.stopPropagation();
+		return false;
     },
 
     closeModal: function()
     {
+        console.log("Br1Modal.closeModal");
         let msgBoxOverlay = document.querySelector("." + Br1Modal.OVERLAY_CLASS);
         if (msgBoxOverlay !== null)
             msgBoxOverlay.remove();
 
         let msgBox = document.querySelector("." + Br1Modal.MODAL_CLASS);
         if (msgBox !== null)
+        {
             msgBox.remove();
+
+            if (Br1Modal.onDialogClose != null)
+                Br1Modal.onDialogClose(msgBox);
+        }
     }
 };
