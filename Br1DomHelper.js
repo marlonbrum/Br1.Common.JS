@@ -87,12 +87,18 @@ var Br1DomHelper = {
     },
 
     /**
+     * CAllback para um EventHand.
+     * @callback EventHandlerCallback
+     * @param {object} event
+     */
+
+    /**
      * Adiciona um handler de evento a todos os elementos do container que 
      * atendam ao seletor.
-     * @param {*} eventName 
-     * @param {*} selector 
-     * @param {*} handler 
-     * @param {*} container 
+     * @param {string} eventName 
+     * @param {string} selector 
+     * @param {EventHandlerCallback} handler 
+     * @param {object} container 
      */
     addEvent: function(eventName, selector, handler, container)
     {
