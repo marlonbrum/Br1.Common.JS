@@ -1,7 +1,17 @@
 ﻿var Br1AjaxHelper = {
     rootUrl: "",
-
     onLocalError: null,
+    unloading: false,
+
+    init: function(rootUrl) {
+        this.setRootUrl(rootUrl);
+        window.addEventListener("beforeunload", this.onBeforeUnload);
+    },
+
+    onBeforeUnload: function() {
+        console.log("Br1AjaxHelper: Page is unloading")
+        Br1AjaxHelper.unloading = true;
+    },
 
     get: function (url, params, successCallback, errorCallback) {
         console.log(`ajax get ('${url}', ${JSON.stringify(params)})`);
@@ -71,7 +81,13 @@
     },
 
     _ajaxFail: function (jqXHR, textStatus, errorThrown, errorCallback, url, params)
-    {       
+    {  
+        if (Br1AjaxHelper.unloading)
+        {
+            console.log("Br1AjaxHelper: Page is unloading, ignoring error");
+            return;
+        }
+
         let errorMessage;
         
         if (!Br1Helper.isNullOrEmpty(jqXHR.responseJSON) && 
@@ -120,7 +136,7 @@
                 Br1AjaxHelper.onLocalError(mensagem, sStack, url, sParametros, info);
             }        
 
-            errorMessage = "Erro ao efetuar a solicitação ao servidor";
+            errorMessage = "Erro ao efetuar a solicitação ao servidor (x)   ";
         }
         console.error('ajax fail:' + errorMessage);
         Br1AjaxHelper._handleErrorMessage(errorMessage, errorCallback);
