@@ -62,7 +62,9 @@
     },
 
     getUrl: function (url) {
-        if (url.startsWith("/"))
+        if (url.startsWith("http:") || url.startsWith("https:"))
+            return url;
+        else if (url.startsWith("/"))
             return Br1AjaxHelper.rootUrl + url.substring(1);
         else
             return Br1AjaxHelper.rootUrl + url;
