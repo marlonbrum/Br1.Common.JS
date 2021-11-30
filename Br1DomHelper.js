@@ -86,6 +86,11 @@ var Br1DomHelper = {
         Br1DomHelper.addEvent("change", selector, handler, container);
     },
 
+    onBlur: function(selector, handler, container)
+    {
+        Br1DomHelper.addEvent("blur", selector, handler, container);
+    },
+
     /**
      * CAllback para um EventHand.
      * @callback EventHandlerCallback
