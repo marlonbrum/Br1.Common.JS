@@ -3,7 +3,8 @@ var MsgBoxHelper = {
         dialogClassName: "",
         buttonClassName: "",
         onValidate: null,
-        beforeShow: null
+        beforeShow: null,
+        maxWidth: null
     },
 
     setOptions(options) {
@@ -49,6 +50,11 @@ var MsgBoxHelper = {
         msgBox.empty();
         let divContent = jQuery("<div class='message-content'>");
         msgBox.append(divContent);
+
+        if (opt.maxWidth)
+        {
+            msgBox.css("max-width", opt.maxWidth);
+        }
 
         if (typeof content === "string")
         {
