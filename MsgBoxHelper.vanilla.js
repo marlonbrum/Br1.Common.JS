@@ -59,7 +59,7 @@ var MsgBoxHelper = {
         if (typeof content === "string")
         {
             divContent.addClass("message-text");
-            divContent.text(content);
+            divContent.html(content);
         }
         else
             divContent.append(content); // TODO: Aqui estou passando um objeto puro, verificar se precisa ser Jquery
