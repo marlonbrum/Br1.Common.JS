@@ -1,35 +1,104 @@
+class Br1DomHelperContext {
+    constructor(element) {
+        if (element == null)
+            this.container = document;
+        else
+            this.container = element;
+
+    }
+
+    /**
+     * Adiciona um handler de evento a todos os elementos do container que 
+     * atendam ao seletor.
+     * @param {string} eventName 
+     * @param {string} selector 
+     * @param {EventHandlerCallback} handler
+     * @returns {Br1DomHelperContext}
+     */
+    addEvent(eventName, selector, handler) {
+        Br1DomHelper.addEvent(eventName, selector, handler, this.container);
+        return this;
+    }
+
+    /**
+     * 
+     * @param {string} selector 
+     * @param {EventHandlerCallback} handler 
+     * @returns {Br1DomHelperContext}
+     */
+    onClick(selector, handler) {
+        Br1DomHelper.onClick(selector, handler, this.container);
+        return this;
+    }
+
+    
+    /**
+     * 
+     * @param {string} selector 
+     * @param {EventHandlerCallback} handler 
+     * @returns {Br1DomHelperContext}
+     */
+    onChange(selector, handler) {
+        Br1DomHelper.onChange(selector, handler, this.container);
+        return this;
+    }
+
+    
+    /**
+     * 
+     * @param {string} selector 
+     * @param {EventHandlerCallback} handler 
+     * @returns {Br1DomHelperContext}
+     */
+    onBlur(selector, handler) {
+        Br1DomHelper.onBlur(selector, handler, this.container);
+        return this;
+    }
+
+    onSubmit(handler)
+    {
+        return this.addEvent("submit", "form", handler);
+    }
+
+}
+
 var Br1DomHelper = {
-    clear: function (element) {
-        while(element.firstChild)
+    clear: function(element) {
+        while (element.firstChild)
             element.removeChild(element.firstChild);
     },
 
-    
-
-    generateOptionsHtml: function(optionsArray, selectedValue, emptyItem)
-    {
-        return optionsArray.reduce( (str, opt) => 
-            str + "<option value='" + opt[0] + "' " + (opt[0] === selectedValue?"selected":"") + ">"
-                + opt[1]
-                + "</option>", 
-            emptyItem ? "<option value=''></option>":"");
+    /**
+     * Retorna um contexto no DOM a partir de um elemento HTML. 
+     * Todas as funções chamadas a partir desse contexto terão como 
+     * @param {HTMLElement|null} element 
+     * @returns {Br1DomHelperContext} l
+     */
+    context: function(element) {
+        return new Br1DomHelperContext(element);
     },
 
-    clearOptions: function(select)
-    {
+
+    generateOptionsHtml: function(optionsArray, selectedValue, emptyItem) {
+        return optionsArray.reduce((str, opt) =>
+            str + "<option value='" + opt[0] + "' " + (opt[0] === selectedValue ? "selected" : "") + ">" +
+            opt[1] +
+            "</option>",
+            emptyItem ? "<option value=''></option>" : "");
+    },
+
+    clearOptions: function(select) {
         while (select.options.length)
             select.remove(0);
     },
 
-    addOptions: function(select, optionsArray, selectedValue, emptyItem)
-    {
+    addOptions: function(select, optionsArray, selectedValue, emptyItem) {
         Br1DomHelper.clearOptions(select);
-        
-        if (emptyItem)        
+
+        if (emptyItem)
             select.options.add(new Option("", ""));
 
-        for (let i=0; i < optionsArray.length; i++)
-        {
+        for (let i = 0; i < optionsArray.length; i++) {
             let opt = new Option(optionsArray[i], optionsArray[i]);
             if (selectedValue == opt.value)
                 opt.selected = true;
@@ -37,8 +106,7 @@ var Br1DomHelper = {
         }
     },
 
-    sortSelect: function(select, sortFunction) 
-    {
+    sortSelect: function(select, sortFunction) {
         if (sortFunction == null || sortFunction == undefined)
             sortFunction = (valueA, textA, valueB, textB) => {
                 let valA = textA.toUpperCase();
@@ -52,42 +120,38 @@ var Br1DomHelper = {
             };
 
         let itens = new Array();
-        for (var i=0;i<select.options.length;i++) 
+        for (var i = 0; i < select.options.length; i++)
             itens[i] = [select.options[i].value, select.options[i].text];
 
         itens.sort((itemA, itemB) => sortFunction(itemA[0], itemA[1], itemB[0], itemB[1]));
 
-        while (select.options.length > 0) 
+        while (select.options.length > 0)
             select.options[0] = null;
-        
-        for (var i=0;i<itens.length;i++) 
-            select.options[i] = new Option(itens[i][1],itens[i][0]);        
+
+        for (var i = 0; i < itens.length; i++)
+            select.options[i] = new Option(itens[i][1], itens[i][0]);
     },
 
     onDomReady: function(callback) {
-        if (document.readyState === "complete" 
-            || document.readyState === "loaded" 
-            || document.readyState === "interactive") {
-                callback();
-        }
-        else
+        if (document.readyState === "complete" ||
+            document.readyState === "loaded" ||
+            document.readyState === "interactive") {
+            callback();
+        } else
             document.addEventListener("DOMContentLoaded", function(event) {
                 callback(event);
             });
     },
 
-    onClick: function(selector, handler, container)
-    {
+    onClick: function(selector, handler, container) {
         Br1DomHelper.addEvent("click", selector, handler, container);
     },
 
-    onChange: function(selector, handler, container)
-    {
+    onChange: function(selector, handler, container) {
         Br1DomHelper.addEvent("change", selector, handler, container);
     },
 
-    onBlur: function(selector, handler, container)
-    {
+    onBlur: function(selector, handler, container) {
         Br1DomHelper.addEvent("blur", selector, handler, container);
     },
 
@@ -105,13 +169,12 @@ var Br1DomHelper = {
      * @param {EventHandlerCallback} handler 
      * @param {object} container 
      */
-    addEvent: function(eventName, selector, handler, container)
-    {
+    addEvent: function(eventName, selector, handler, container) {
         if (container == null)
             container = document;
-        
+
         let elements = container.querySelectorAll(selector);
-        for(let i=0; i < elements.length; i++)
+        for (let i = 0; i < elements.length; i++)
             elements[i].addEventListener(eventName, handler);
     },
 
@@ -119,13 +182,11 @@ var Br1DomHelper = {
      * Limpa o elemento informado
      * @param {HTMLElement} element 
      */
-    empty: function(element)
-    {
+    empty: function(element) {
         element.innerHTML = "";
     },
 
-    create: function(tagName, className)
-    {
+    create: function(tagName, className) {
         el = document.createElement(tagName);
         el.classList.add(className);
         return el;
@@ -136,42 +197,38 @@ var Br1DomHelper = {
      * dentro dele (Para não serem validados)
      * @param {HTMLElement} container 
      */
-    hideAndDisable: function(container)
-    {
+    hideAndDisable: function(container) {
         container.style.display = "none";
-        
+
         container.querySelectorAll("input, select")
             .forEach(el => el.disabled = true);
     },
 
     /**
-         * Exibe o container informado e habilita todos os inputs  e selects
-         * dentro dele
-         * @param {HTMLElement} container
-         * @param {string} valor da propriedade display a ser definida 
-         */
-    showAndEnable: function(container, displayType = "block")
-    {
+     * Exibe o container informado e habilita todos os inputs  e selects
+     * dentro dele
+     * @param {HTMLElement} container
+     * @param {string} valor da propriedade display a ser definida 
+     */
+    showAndEnable: function(container, displayType = "block") {
         container.style.display = "block";
-        
+
         container.querySelectorAll("input, select")
             .forEach(el => el.disabled = false);
     },
 
-    show: function(selector, visible, displayType = "block")
-    {
+    show: function(selector, visible, displayType = "block") {
         document.querySelectorAll(selector)
             .forEach(el => el.style.display = visible ? displayType : "none");
     },
 
-    elementIndex: function(el) 
-    {
-        var i=0;
-        while(el.previousElementSibling ) {
-            el=el.previousElementSibling;
+    elementIndex: function(el) {
+        var i = 0;
+        while (el.previousElementSibling) {
+            el = el.previousElementSibling;
             i++;
         }
-        return i;    
+        return i;
     },
 
     /**
@@ -179,8 +236,7 @@ var Br1DomHelper = {
      * @param {HTMLElement} previousElement 
      * @param {HTMLElement} newElement 
      */
-    insertAfter: function(previousElement, newElement)
-    {
+    insertAfter: function(previousElement, newElement) {
         let next = previousElement.nextElementSibling;
         if (next == null)
             previousElement.parentElement.appendChild(newElement);
