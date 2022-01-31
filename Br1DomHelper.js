@@ -1,10 +1,12 @@
-class Br1DomHelperContext {
-    constructor(element) {
-        if (element == null)
+/**
+ * Essa classe contém métodos para adicionar eventos a elementos HTML.
+ */
+class Br1DomHelperEvents {
+    constructor(container) {
+        if (container == null)
             this.container = document;
         else
-            this.container = element;
-
+            this.container = container;
     }
 
     /**
@@ -13,7 +15,7 @@ class Br1DomHelperContext {
      * @param {string} eventName 
      * @param {string} selector 
      * @param {EventHandlerCallback} handler
-     * @returns {Br1DomHelperContext}
+     * @returns {Br1DomHelperEvents}
      */
     addEvent(eventName, selector, handler) {
         Br1DomHelper.addEvent(eventName, selector, handler, this.container);
@@ -24,7 +26,7 @@ class Br1DomHelperContext {
      * 
      * @param {string} selector 
      * @param {EventHandlerCallback} handler 
-     * @returns {Br1DomHelperContext}
+     * @returns {Br1DomHelperEvents}
      */
     onClick(selector, handler) {
         Br1DomHelper.onClick(selector, handler, this.container);
@@ -36,7 +38,7 @@ class Br1DomHelperContext {
      * 
      * @param {string} selector 
      * @param {EventHandlerCallback} handler 
-     * @returns {Br1DomHelperContext}
+     * @returns {Br1DomHelperEvents}
      */
     onChange(selector, handler) {
         Br1DomHelper.onChange(selector, handler, this.container);
@@ -48,18 +50,109 @@ class Br1DomHelperContext {
      * 
      * @param {string} selector 
      * @param {EventHandlerCallback} handler 
-     * @returns {Br1DomHelperContext}
+     * @returns {Br1DomHelperEvents}
      */
     onBlur(selector, handler) {
         Br1DomHelper.onBlur(selector, handler, this.container);
         return this;
     }
 
+    /**
+     * 
+     * @param {EventHandlerCallback} handler 
+     * @returns {Br1DomHelperEvents}
+     */
     onSubmit(handler)
     {
         return this.addEvent("submit", "form", handler);
     }
 
+}
+
+/**
+ * Classe com funções para tratamento de elementos Select (DropDownList, ComboBox)
+ */
+class Br1DomHelperSelect {
+    constructor(selector, container) {
+        
+        this.container = container ?? document;
+
+        this.elements = this.container.querySelectorAll(selector);
+    }
+
+    /**
+     * Limpa os itens da Select
+     * @returns {Br1DomHelperSelect}
+     */
+    clear() {
+        this.elements.forEach(element => element.innerHTML = "");
+        return this;
+    }
+
+    /**
+     * Retorna o texto do item selecionado
+     * @returns {string}
+     */
+    text() {
+        if (this.elements.length == 0)
+            return "";
+        else
+            return this.elements[0].options[this.elements[0].selectedIndex].text;        
+    }
+
+    onLoad(callback) {
+        this.onLoadHandlers = this.onLoadHandlers ?? [];
+        this.onLoadHandlers.push(callback); 
+        return this;
+    }
+
+    /**
+     * Preenche a Select com os itens do array.
+     * @param {array} array Array de objetos com os valores a serem adicionados.
+     * @param {string} valueField Nome do campo que contem o valor do item.
+     * @param {string} textField Nome do campo que contem o texto do item.
+     * @param {string} selectedValue Valor do item que deve ser selecionado.
+     * @returns {Br1DomHelperSelect}
+     */
+    addFromArray(array, valueField, textField, selectedValue) {
+        this.clear();
+        this.elements.forEach(element => {
+            array.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item[valueField];
+                option.text = item[textField];
+                if (selectedValue != null && selectedValue == item[valueField])
+                    option.selected = true;
+                element.add(option);
+            });
+
+            if (this.onLoadHandlers != null)
+                this.onLoadHandlers.forEach(handler => handler(element));
+        });
+        return this;
+    }
+
+    /**
+     * Chama a url informada e preenche a Select com os dados retornados.
+     * @param {string} url Url que será chamada.
+     * @param {object} params Parâmetros que serão enviados na chamada.
+     * @param {string} valueField Nome do campo que contem o valor do item.
+     * @param {string} textField Nome do campo que contem o texto do item.
+     * @param {string} selectedValue Valor do item que deve ser selecionado.
+     * @returns {Br1DomHelperSelect}
+     */
+    addFromAjax(url, params, valueField, textField, selectedValue) {
+        this.clear();
+        this.addFromArray([{valor: 0, descricao: "Carregando..."}], "valor", "descricao", 0);
+        let select = this;
+
+        Br1AjaxHelper.get(url, params, data => {
+            select.clear();
+            select.sourceList = data;
+            select.addFromArray(this.sourceList, valueField, textField, selectedValue);
+        });
+        return select;
+    }
 }
 
 var Br1DomHelper = {
@@ -74,10 +167,19 @@ var Br1DomHelper = {
      * @param {HTMLElement|null} element 
      * @returns {Br1DomHelperContext} l
      */
-    context: function(element) {
-        return new Br1DomHelperContext(element);
+    events: function(element) {
+        return new Br1DomHelperEvents(element);
     },
 
+    /**
+     * Retorna um objeto para manipulação de elementos Select.
+     * @param {*} selector 
+     * @param {*} container 
+     * @returns 
+     */
+    select: function(selector, container = null) {
+        return new Br1DomHelperSelect(selector, container);
+    },
 
     generateOptionsHtml: function(optionsArray, selectedValue, emptyItem) {
         return optionsArray.reduce((str, opt) =>
