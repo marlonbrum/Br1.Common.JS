@@ -173,8 +173,8 @@ var Br1DomHelper = {
 
     /**
      * Retorna um objeto para manipulação de elementos Select.
-     * @param {*} selector 
-     * @param {*} container 
+     * @param {string} selector 
+     * @param {HTMLElement|null} container 
      * @returns 
      */
     select: function(selector, container = null) {
