@@ -24,7 +24,7 @@ var MsgBoxHelper = {
     {
         MsgBoxHelper.customMessage(msgText, ["Sim", "Não"], function (button) {
             if (Br1Helper.isFunction(callback))
-                callback(button === 0);
+                callback(button == 0);
         }, options);
     },
 
@@ -32,7 +32,7 @@ var MsgBoxHelper = {
     {   
         MsgBoxHelper.customMessage(msgText, ["OK", "Cancelar"], function (button) {
             if (Br1Helper.isFunction(callback))
-                callback(button === 0);
+                callback(button == 0);
         }, options);
     },
 

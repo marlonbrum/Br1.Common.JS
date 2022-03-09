@@ -25,10 +25,39 @@
             });
     },
 
-    post: function (url, params, successCallback, errorCallback) {
+    _post: function (url, params, successCallback, errorCallback, jsonFormat) {
         console.log(`ajax post ('${url}', ${JSON.stringify(params)})`);
+        let pars = jsonFormat ? JSON.stringify(params) : params;
         
-        jQuery.post(Br1AjaxHelper.getUrl(url), params,
+        jQuery.ajax({
+            contentType: 'application/json',
+            data: pars,
+            dataType: 'json',
+            success: function (returnObj) {
+                Br1AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
+            },
+            error: errorCallback,
+            processData: !jsonFormat,
+            type: 'POST',
+            url: Br1AjaxHelper.getUrl(url)
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            Br1AjaxHelper._ajaxFail(jqXHR, textStatus, errorThrown, errorCallback,
+                url, params);
+        });
+    },
+
+    post: function (url, params, successCallback, errorCallback) {
+        this._post(url, params, successCallback, errorCallback, false);
+    },
+
+    postJson: function (url, params, successCallback, errorCallback) {
+        this._post(url, params, successCallback, errorCallback, true);
+    },
+/*
+    postJSON: function (url, params, successCallback, errorCallback) {
+        console.log(`ajax postJSON ('${url}', ${JSON.stringify(params)})`);
+        jQuery.post(Br1AjaxHelper.getUrl(url), JSON.stringify(params),
             function (returnObj) {
                 Br1AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
             })
@@ -37,6 +66,7 @@
                     url, params);
             });
     },
+*/
 
     postWithFiles: function (url, formData, successCallback, errorCallback) {
         jQuery.ajax({
@@ -113,8 +143,13 @@
                 
                 let sRespText = "";
                 if (!Br1Helper.isNullOrEmpty(jqXHR.responseText))
-                    sRespText = jqXHR.responseText.maxSize(1000);
-                
+                {
+                    if (jqXHR.responseText.length > 800)
+                        sRespText = jqXHR.responseText.substring(0, 800) + "...";
+                    else
+                        sRespText = jqXHR.responseText;
+                }
+
                 let info = "HTTP Code = " + jqXHR.status + "\n"
                             + "Response Text = " + sRespText + "\n"
                             + "textStatus = " + textStatus + "\n";
