@@ -24,8 +24,19 @@
                     errorCallback, url, params);
             });
     },
+    
+    post: function (url, params, successCallback, errorCallback) {
+        jQuery.post(Br1AjaxHelper.getUrl(url), params,         
+            function (returnObj) {
+                Br1AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                Br1AjaxHelper._ajaxFail(jqXHR, textStatus, errorThrown, errorCallback,
+                    url, params);
+            });
+    },
 
-    _post: function (url, params, successCallback, errorCallback, jsonFormat) {
+    postJson: function (url, params, successCallback, errorCallback) {
         console.log(`ajax post ('${url}', ${JSON.stringify(params)})`);
         let pars = jsonFormat ? JSON.stringify(params) : params;
         
@@ -45,14 +56,6 @@
             Br1AjaxHelper._ajaxFail(jqXHR, textStatus, errorThrown, errorCallback,
                 url, params);
         });
-    },
-
-    post: function (url, params, successCallback, errorCallback) {
-        this._post(url, params, successCallback, errorCallback, false);
-    },
-
-    postJson: function (url, params, successCallback, errorCallback) {
-        this._post(url, params, successCallback, errorCallback, true);
     },
 /*
     postJSON: function (url, params, successCallback, errorCallback) {
