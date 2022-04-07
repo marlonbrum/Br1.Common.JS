@@ -21,6 +21,10 @@ var Br1PaymentHelper = {
             }
         };
 
+        let token = btoa(JSON.stringify(data.card));
+        callback(token);
+        /*
+
         fetch(this.apiUrl + "/tokens", {
             method: 'POST',
             headers: {
@@ -32,7 +36,7 @@ var Br1PaymentHelper = {
         .then(response => response.json())
         .then(data => callback(data.id))
         .catch(Br1PaymentHelper.handleError);
-    
+        */
     },
 
     handleError: function (errorInfo) {
