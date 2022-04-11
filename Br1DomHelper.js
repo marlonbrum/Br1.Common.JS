@@ -164,11 +164,11 @@ var Br1DomHelper = {
     /**
      * Retorna um contexto no DOM a partir de um elemento HTML. 
      * Todas as funções chamadas a partir desse contexto terão como 
-     * @param {HTMLElement|null} element 
+     * @param {HTMLElement|null} container 
      * @returns {Br1DomHelperContext} l
      */
-    events: function(element) {
-        return new Br1DomHelperEvents(element);
+    events: function(container) {
+        return new Br1DomHelperEvents(container);
     },
 
     /**
