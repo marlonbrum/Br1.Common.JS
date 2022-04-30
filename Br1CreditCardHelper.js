@@ -1,5 +1,14 @@
 ﻿var Br1CreditCardHelper = {
 
+    acceptedFormats: [
+        /^4[0-9]{12}(?:[0-9]{3})?$/,
+        /^5[1-5][0-9]{14}$|^2(?:2(?:2[1-9]|[3-9][0-9])|[3-6][0-9][0-9]|7(?:[01][0-9]|20))[0-9]{12}$/,
+        /^3[47][0-9]{13}$/,
+        /^65[4-9][0-9]{13}|64[4-9][0-9]{13}|6011[0-9]{12}|(622(?:12[6-9]|1[3-9][0-9]|[2-8][0-9][0-9]|9[01][0-9]|92[0-5])[0-9]{10})$/,
+        /^3(?:0[0-5]|[68][0-9])[0-9]{11}$/,
+        /^(?:2131|1800|35[0-9]{3})[0-9]{11}$/
+    ],
+
     /**
      * Prefixo utilizado por cada bandeira de cartão. Para a comparação funcionar, esse array deve estar 
      * ordenado do prefixo com mais dígitos para o com menos 
@@ -108,5 +117,50 @@
             iAno += 2000;
 
         return iMes.toString().padStart(2, "00") + "/" + iAno.toString();
-    }
+    },
+
+    validateNumber: function (value) 
+    {
+        // remove all non digit characters
+        let value = value.replace(/\D/g, '');
+        let sum = 0;
+        let shouldDouble = false;
+        // loop through values starting at the rightmost side
+        for (let i = value.length - 1; i >= 0; i--) {
+          let digit = parseInt(value.charAt(i));
+      
+          if (shouldDouble) {
+            if ((digit *= 2) > 9) digit -= 9;
+          }
+      
+          sum += digit;
+          shouldDouble = !shouldDouble;
+        }
+        
+        let valid = (sum % 10) == 0;
+        let accepted = false;
+        
+        // loop through the keys (visa, mastercard, amex, etc.)
+        Object.keys(this.regularExpressions).forEach(function(key) {
+          var regex = acceptedCreditCards[key];
+          if (regex.test(value)) {
+            accepted = true;
+          }
+        });
+        
+        return valid && accepted;
+    
+    },
+
+    validateCVV: function(creditCard, cvv) 
+    {
+        creditCard = Br1Helper.stripNonDigits(creditCard);
+        cvv = Br1Helper.stripNonDigits(cvv);
+
+        brand = Br1CreditCardHelper.identityBrand(creditCard);
+        if (brand == "amex")
+            return cvv.length == 4;
+        else
+            return cvv.length == 3;
+      }
 };
