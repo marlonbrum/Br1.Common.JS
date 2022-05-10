@@ -122,7 +122,7 @@
     validateNumber: function (value) 
     {
         // remove all non digit characters
-        let value = value.replace(/\D/g, '');
+        value = value.replace(/\D/g, '');
         let sum = 0;
         let shouldDouble = false;
         // loop through values starting at the rightmost side
@@ -141,11 +141,9 @@
         let accepted = false;
         
         // loop through the keys (visa, mastercard, amex, etc.)
-        Object.keys(this.regularExpressions).forEach(function(key) {
-          var regex = acceptedCreditCards[key];
-          if (regex.test(value)) {
-            accepted = true;
-          }
+        this.acceptedFormats.forEach(regex => {
+            if (regex.test(value)) 
+                accepted = true;
         });
         
         return valid && accepted;
