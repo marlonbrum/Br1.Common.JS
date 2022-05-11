@@ -96,6 +96,8 @@ class Br1DomHelperSelect {
     text() {
         if (this.elements.length == 0)
             return "";
+        else if (this.elements[0].options.length == 0)
+            return "";
         else
             return this.elements[0].options[this.elements[0].selectedIndex].text;        
     }
