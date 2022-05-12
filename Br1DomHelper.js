@@ -58,8 +58,8 @@ class Br1DomHelperEvents {
     }
 
     /**
-     * 
-     * @param {EventHandlerCallback} handler 
+     * Adiciona um evento `submit` para todos os forms da página
+     * @param {EventHandlerCallback} handler função que irá tratar o evento 
      * @returns {Br1DomHelperEvents}
      */
     onSubmit(handler)
@@ -347,6 +347,47 @@ var Br1DomHelper = {
         else
             previousElement.parentElement.insertBefore(newElement, next);
 
+    },
+
+    /**
+     * Desabilita os botões de submit do formulário quando um submit é 
+     * feito, para evitar que seja feito mais de unica vez
+     */
+    disableOnSubmit: function() {        
+
+        Br1DomHelper
+            .events()
+            .onClick("[type=submit]", event => {
+                Br1DomHelper.clickedButton = event.target.getAttribute("name"); 
+                return true;               
+            })
+            .onSubmit(event => 
+            {
+                event.target
+                    .querySelectorAll("[type=submit]")
+                    .forEach(el => {
+                        // se o input submit estiver com o atributo name definido,
+                        // será enviado no POST um valor com esse nome, para definir
+                        // qual botão foi clicado. Se o botão for desabilitado, esse 
+                        // valor não será enviado. Para que isso não gere problemas,
+                        // adiciono um input hidden com o mesmo nome.
+                        if (!Br1Helper.isNullOrEmpty(Br1DomHelper.clickedButton))
+                        {   
+                            let input = el.closest("form")
+                                            .querySelector(`input[type=hidden][name=${Br1DomHelper.clickedButton}]`);
+                            if (input == null)
+                            {
+                                input = document.createElement('input');
+                                input.setAttribute("type", "hidden");
+                                input.setAttribute("name", nome);
+                                input.value = "";
+                                frm.appendChild(input);
+                            }                                         
+                        }
+
+                        el.disabled = true;
+                    });
+            });
     }
 
 };
