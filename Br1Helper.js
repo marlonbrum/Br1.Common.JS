@@ -536,7 +536,27 @@
         if (date === null)
             return "";
         else
-            return date.getDate()
+            return date.getDate().padStart(2, "0") + "/" 
+                    + (date.getMonth() + 1).padStart(2, "0") 
+                    + "/" + date.getFullYear();
+    },
+
+    dateToStrInput: function(date) {
+        if (date === null)
+            return "";
+        else
+            return date.toISOString().substr(0, 10);
+    },
+
+    dateTimeToStr: function(date) {
+        if (date === null)
+            return "";
+        else
+            return date.getDate().padStart(2, "0") + "/" 
+                    + (date.getMonth() + 1).padStart(2, "0") 
+                    + "/" + date.getFullYear()
+                    + " " + date.getHours().padStart(2, "0")
+                    + ":" + date.getMinutes().padStart(2, "0");
     },
 
     isDigit: function(char)

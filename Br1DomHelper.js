@@ -308,6 +308,11 @@ var Br1DomHelper = {
             .forEach(el => el.disabled = true);
     },
 
+    hideAndDisableAll: function(selector) {
+        document.querySelectorAll(selector)
+            .forEach(el => Br1DomHelper.hideAndDisable(el));
+    },  
+
     /**
      * Exibe o container informado e habilita todos os inputs  e selects
      * dentro dele
@@ -388,6 +393,57 @@ var Br1DomHelper = {
                         el.disabled = true;
                     });
             });
+    },
+
+    objectToForm: function(obj) {
+        for(let key in obj)
+        {
+            let element = document.getElementById(key);
+            if (element != null)
+            {
+                if (element.getAttribute("type") == "date")
+                {
+                    let s = Br1Helper.dateToStrInput(Br1Helper.strToDate(obj[key]));
+                    element.value = s;
+                }
+                else
+                    element.value = obj[key];
+            }
+        }
+    },
+
+    formToObject: function(obj) {
+        for(let key in obj)
+        {
+            let element = document.getElementById(key);
+            if (element != null)
+            {
+                if (element.getAttribute("type") == "date")
+                {
+                    if (Br1Helper.isNullOrEmpty(element.value))
+                        obj[key] = null;
+                    else
+                    {
+                        let dt = new Date(element.value);
+                        obj[key] = Br1Helper.dateToStr(dt);
+                    }
+                }
+                else
+                    obj[key] = element.value;
+            }
+        }
+    },
+
+    setRadioList: function(name, value)
+    {
+        if (value != null)
+            document.querySelector(`input[name="${name}"][value="${value}"]`).checked = true;
+    },
+
+    getRadioList: function(name)
+    {
+        let element = document.querySelector(`input[name="${name}"]:checked`);
+        return element.value;
     }
 
 };
