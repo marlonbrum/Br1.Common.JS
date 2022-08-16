@@ -497,35 +497,32 @@
         else
             return dt.getDate().toString().padStart(2, "0") + "/" + (dt.getMonth() + 1).toString().padStart(2, "0") + "/" + dt.getFullYear().toString();
     },
+
     
     strToDate: function (str, useDefaultYear) {
         if (Br1Helper.isNullOrWhiteSpace(str))
             return null;
-        else {
-            let parts = str.split('/');
-            let dia = parseInt(parts[0], 10);
-            let mes = parseInt(parts[1], 10);
-
-            if (dia < 1 || dia > 31 || mes < 1 || mes > 12)
-                return null;
-
-            let ano = 0;
-            if (parts.length < 3) {
-                if (useDefaultYear == true)
-                    ano = (new Date()).getFullYear();
-                else
-                    return null;
+        else 
+        {
+            let formats = [
+                /(?<ano>\d{4})\-(?<mes>\d{2})\-(?<dia>\d{2})T(?<hora>\d{2})\:(?<minuto>\d{2})\:(?<segundo>\d{2}).\d{3}Z/,
+                /(?<ano>\d{4})\-(?<mes>\d{2})\-(?<dia>\d{2}) (?<hora>\d{2})\:(?<minuto>\d{2})\:(?<segundo>\d{2})/,
+                /(?<ano>\d{4})\-(?<mes>\d{2})\-(?<dia>\d{2}) (?<hora>\d{2})\:(?<minuto>\d{2})/,
+                /(?<ano>\d{4})\-(?<mes>\d{2})\-(?<dia>\d{2})/,                
+                /(?<dia>\d{2})\\(?<mes>\d{2})\\(?<ano>\d{4}) (?<hora>\d{2})\:(?<minuto>\d{2})/,
+                /(?<dia>\d{2})\\(?<mes>\d{2})\\(?<ano>\d{4})/
+            ];
+            
+            for (let i = 0; i < formats.length; i++) 
+            {
+                let matches = str.match(formats[i]);
+                if (matches !== null)
+                    return new Date(matches.groups.ano, matches.groups.mes - 1, matches.groups.dia, 
+                            matches.groups.hora ?? 0, matches.groups.minuto ?? 0, matches.groups.segundo ?? 0);
             }
-            else
-                ano = parseInt(parts[2], 10);
 
-            if (ano <= 50)
-                ano += 2000;
-            else if (ano < 100)
-                ano += 1900;
-
-            return new Date(ano, mes - 1, dia);
         }
+        
     },
 
     strToFloat: function(str) {
@@ -542,7 +539,7 @@
     },
 
     dateToStrInput: function(date) {
-        if (date === null)
+        if (Br1Helper.isNullOrEmpty(date))
             return "";
         else
             return date.toISOString().substr(0, 10);
@@ -612,6 +609,10 @@
         let mascara = (tel.length > 10) ? '(00) 0 0000-0000' : '(00) 0000-0000';
 
         return this.formatarNumero(tel, mascara);
+    },
+
+    formatarMoeda: function (numero) {
+        return "R$ " + numero.toFixed(2).replace(".", ",");
     },
 
     insertAfter: function(node, referenceNode) {

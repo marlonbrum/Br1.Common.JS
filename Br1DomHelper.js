@@ -366,7 +366,7 @@ var Br1DomHelper = {
                 Br1DomHelper.clickedButton = event.target.getAttribute("name"); 
                 return true;               
             })
-            .onSubmit(event => 
+            .addEvent("submit", "form:not(.dont-disable)", event => 
             {
                 event.target
                     .querySelectorAll("[type=submit]")
@@ -392,6 +392,14 @@ var Br1DomHelper = {
 
                         el.disabled = true;
                     });
+            });
+    },
+
+    reenableSubmitButtons: function() {
+        document.querySelectorAll("[type=submit]")
+            .forEach(el => {
+                el.disabled = false;
+                el.removeAttribute("disabled");
             });
     },
 
@@ -424,7 +432,7 @@ var Br1DomHelper = {
                         obj[key] = null;
                     else
                     {
-                        let dt = new Date(element.value);
+                        let dt = Br1Helper.strToDate(element.value);
                         obj[key] = Br1Helper.dateToStr(dt);
                     }
                 }
