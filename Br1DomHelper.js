@@ -409,11 +409,10 @@ var Br1DomHelper = {
             let element = document.getElementById(key);
             if (element != null)
             {
-                if (element.getAttribute("type") == "date")
-                {
-                    let s = Br1Helper.dateToStrInput(Br1Helper.strToDate(obj[key]));
-                    element.value = s;
-                }
+                if (element.classList.contains("radio-group"))
+                    Br1DomHelper.setRadioList(key, obj[key]);
+                else if (element.getAttribute("type") == "date")                
+                    element.value = Br1Helper.dateToStrInput(Br1Helper.strToDate(obj[key]));
                 else
                     element.value = obj[key];
             }
@@ -425,8 +424,10 @@ var Br1DomHelper = {
         {
             let element = document.getElementById(key);
             if (element != null)
-            {
-                if (element.getAttribute("type") == "date")
+            {   
+                if (element.classList.contains("radio-group"))
+                    obj[key] = Br1DomHelper.getRadioList(key);        
+                else if (element.getAttribute("type") == "date")
                 {
                     if (Br1Helper.isNullOrEmpty(element.value))
                         obj[key] = null;
