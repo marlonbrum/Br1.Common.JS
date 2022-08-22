@@ -611,8 +611,14 @@
         return this.formatarNumero(tel, mascara);
     },
 
-    formatarMoeda: function (numero) {
-        return "R$ " + numero.toFixed(2).replace(".", ",");
+    /**
+     * Formata o número informado como moeda
+     * @param {number} numero Número que deve ser formatado
+     * @param {bool} usarCifrao 
+     * @returns 
+     */
+    formatarMoeda: function (numero, usarCifrao) {
+        return (usarCifrao ? "R$ " : "") + numero.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
     },
 
     insertAfter: function(node, referenceNode) {
