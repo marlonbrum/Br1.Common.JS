@@ -510,7 +510,9 @@
                 /(?<ano>\d{4})\-(?<mes>\d{2})\-(?<dia>\d{2}) (?<hora>\d{2})\:(?<minuto>\d{2})/,
                 /(?<ano>\d{4})\-(?<mes>\d{2})\-(?<dia>\d{2})/,                
                 /(?<dia>\d{2})\\(?<mes>\d{2})\\(?<ano>\d{4}) (?<hora>\d{2})\:(?<minuto>\d{2})/,
-                /(?<dia>\d{2})\\(?<mes>\d{2})\\(?<ano>\d{4})/
+                /(?<dia>\d{2})\\(?<mes>\d{2})\\(?<ano>\d{4})/,
+                /(?<dia>\d{2})\/(?<mes>\d{2})\/(?<ano>\d{4}) (?<hora>\d{2})\:(?<minuto>\d{2})/,
+                /(?<dia>\d{2})\/(?<mes>\d{2})\/(?<ano>\d{4})/
             ];
             
             for (let i = 0; i < formats.length; i++) 
