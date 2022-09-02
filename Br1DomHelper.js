@@ -452,7 +452,7 @@ var Br1DomHelper = {
     getRadioList: function(name)
     {
         let element = document.querySelector(`input[name="${name}"]:checked`);
-        return element.value;
+        return Br1Helper.isNullOrEmpty(element) || Br1Helper.isNullOrEmpty( element.value ) ? null : element.value;
     }
 
 };
