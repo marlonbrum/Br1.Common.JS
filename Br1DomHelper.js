@@ -453,6 +453,15 @@ var Br1DomHelper = {
     {
         let element = document.querySelector(`input[name="${name}"]:checked`);
         return Br1Helper.isNullOrEmpty(element) || Br1Helper.isNullOrEmpty( element.value ) ? null : element.value;
-    }
+    },
 
+    objectToTr: function( obj )
+    {
+        let tr = document.createElement("tr");
+        
+        for(let key in obj)
+            tr.innerHTML += `<td class="${key}">${obj[key] != null ? obj[key]: "" }</td>`;
+            
+        return tr;
+    }
 };
