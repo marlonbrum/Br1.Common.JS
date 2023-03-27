@@ -100,8 +100,8 @@ var MsgBoxHelper = {
                             return;
                     
                     Br1Modal.closeModal();
-                    
-                    callback(idx, msgBox);
+                    if (Br1Helper.isFunction(callback))
+                        callback(idx, msgBox);
                 });
             }
         }
