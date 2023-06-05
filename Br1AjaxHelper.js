@@ -112,7 +112,10 @@
                 showErrorMessage = true;
         }
         if (showErrorMessage)
+        {
+            modalLoading.stop();
             MsgBoxHelper.msgInfo(errorMessage);
+        }
     },
 
     _ajaxFail: function (jqXHR, textStatus, errorThrown, errorCallback, url, params)
