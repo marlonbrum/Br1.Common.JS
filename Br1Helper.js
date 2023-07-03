@@ -495,7 +495,9 @@
         if (dt === null)
             return "";
         else
-            return dt.getDate().toString().padStart(2, "0") + "/" + (dt.getMonth() + 1).toString().padStart(2, "0") + "/" + dt.getFullYear().toString();
+            return dt.getDate().toString().padStart(2, "0") + "/" 
+                    + (dt.getMonth() + 1).toString().padStart(2, "0") + "/" 
+                    + dt.getFullYear().toString();
     },
 
     
@@ -529,15 +531,6 @@
 
     strToFloat: function(str) {
         return parseFloat(str.replace(/[^\d,]/g, "").replace(",", "."));
-    },
-
-    dateToStr: function(date) {
-        if (date === null)
-            return "";
-        else
-            return date.getDate().padStart(2, "0") + "/" 
-                    + (date.getMonth() + 1).padStart(2, "0") 
-                    + "/" + date.getFullYear();
     },
 
     dateToStrInput: function(date) {
