@@ -1,8 +1,8 @@
 class Br1CsvReader {
 
-    constructor() {
-        this.fieldDelimiter = ";";
-        this.quotedChar = "\"";
+    constructor(fieldDelimiter = ";", quotedChar = "\"") {
+        this.fieldDelimiter = fieldDelimiter;
+        this.quotedChar = quotedChar;
 
         this.headers = [];
         this.currentLine = [];        
