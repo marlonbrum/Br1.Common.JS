@@ -1,7 +1,7 @@
 class Br1CsvReader {
 
-    constructor(fieldDelimiter = ";", quotedChar = "\"") {
-        this.fieldDelimiter = fieldDelimiter;
+    constructor(fieldDelimiters = [";", ","], quotedChar = "\"") {
+        this.fieldDelimiters = fieldDelimiters;
         this.quotedChar = quotedChar;
 
         this.headers = [];
@@ -9,9 +9,22 @@ class Br1CsvReader {
         this.headersComp = [];
     }
 
-    textBeforeDelimiter(str, startPos, delimiter)
+    indexOfAny(tokens, searchString, startPosition) 
+    {        
+        for (const token of tokens) 
+        {
+            let idx = searchString.indexOf(token, startPosition);
+            if (idx > -1)
+                return idx;
+        }
+        
+        return -1; 
+    }
+
+    textBeforeDelimiter(str, startPos, delimiters)
     {
-        let endPos = str.indexOf(delimiter, startPos);
+        let endPos = this.indexOfAny(delimiters, str, startPos);
+
         let retorno = {
             tokenText: "",
             nextPostion: 0
@@ -46,7 +59,7 @@ class Br1CsvReader {
         let i=0; 
 
         let fields = [];
-        let delimiter = "";
+        let delimiters = [];
         let startPos = 0;
         
         while (i < line.length)
@@ -54,20 +67,20 @@ class Br1CsvReader {
 
             if (line[i] == this.quotedChar)
             {
-                delimiter = this.quotedChar;
+                delimiters = [this.quotedChar];
                 startPos = i + 1;
             }
             else
             {
-                delimiter = this.fieldDelimiter;
+                delimiters = this.fieldDelimiters;
                 startPos = i;
             }
 
             
-            let ret = this.textBeforeDelimiter(line, startPos, delimiter);
+            let ret = this.textBeforeDelimiter(line, startPos, delimiters);
             fields.push(ret.tokenText);
             i = ret.nextPostion;
-            if (line[i] == this.fieldDelimiter)
+            if (this.fieldDelimiters.some(t => line[i]))
                 i++;
         }
 
