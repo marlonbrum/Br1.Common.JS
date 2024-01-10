@@ -438,7 +438,12 @@ var Br1DomHelper = {
                     }
                 }
                 else
-                    obj[key] = element.value;
+                {
+                    if (Br1Helper.isNullOrEmpty(element.value))
+                        obj[key] = null;
+                    else
+                        obj[key] = element.value;
+                }
             }
         }
     },
