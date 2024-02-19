@@ -67,6 +67,17 @@ class Br1DomHelperEvents {
         return this.addEvent("submit", "form", handler);
     }
 
+    /**
+     * Substitui o evento `submit` do formulário informado pelo handler informado. Esse método 
+     * impede que o formulário seja submetido de fato, executando apenas o handler.
+     * @param {string} formSelector
+     * @param {EventHandlerCallback} handler
+     * @returns {Br1DomHelperEvents}      
+     */ 
+    replaceSubmit(formSelector, handler) {
+        return Br1DomHelper.replaceSubmit(formSelector, handler);        
+    }
+
 }
 
 /**
@@ -167,7 +178,7 @@ var Br1DomHelper = {
      * Retorna um contexto no DOM a partir de um elemento HTML. 
      * Todas as funções chamadas a partir desse contexto terão como 
      * @param {HTMLElement|null} container 
-     * @returns {Br1DomHelperContext} l
+     * @returns {Br1DomHelperEvents} l
      */
     events: function(container) {
         return new Br1DomHelperEvents(container);
@@ -257,6 +268,20 @@ var Br1DomHelper = {
 
     onBlur: function(selector, handler, container) {
         Br1DomHelper.addEvent("blur", selector, handler, container);
+    },
+
+    replaceSubmit: function(formSelector, handler) {
+        Br1DomHelper.addEvent("submit", formSelector, event => {        
+            event.preventDefault();
+            try
+            {
+                handler(event);
+            }
+            finally
+            {
+                return false;
+            }
+        });
     },
 
     /**
