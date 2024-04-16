@@ -345,10 +345,15 @@ var Br1DomHelper = {
      * @param {string} valor da propriedade display a ser definida 
      */
     showAndEnable: function(container, displayType = "block") {
-        container.style.display = "block";
+        container.style.display = displayType;
 
         container.querySelectorAll("input, select")
             .forEach(el => el.disabled = false);
+    },
+
+    showAndEnableAll: function(selector, displayType = "block") {
+        document.querySelectorAll(selector)
+            .forEach(el => Br1DomHelper.showAndEnable(el, displayType));
     },
 
     show: function(selector, visible, displayType = "block") {
