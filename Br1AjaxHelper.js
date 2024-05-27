@@ -2,6 +2,7 @@
     rootUrl: "",
     onLocalError: null,
     unloading: false,
+    handleReturnedErros: true,
 
     init: function(rootUrl) {
         this.setRootUrl(rootUrl);
@@ -186,7 +187,7 @@
     },
 
     _ajaxReturn: function (returnObj, successCallback, errorCallback) {
-        if (returnObj.ErrorMessage === null || returnObj.ErrorMessage === undefined) {
+        if (returnObj.ErrorMessage === null || returnObj.ErrorMessage === undefined || this.handleReturnedErros === false) {
             console.log("ajax ok");
             if (Br1Helper.isFunction(successCallback))
                 successCallback(returnObj);

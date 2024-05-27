@@ -498,5 +498,24 @@ var Br1DomHelper = {
             tr.innerHTML += `<td class="${key}">${obj[key] != null ? obj[key]: "" }</td>`;
             
         return tr;
+    },
+
+    isElementInViewport: function(el) {
+        const rect = el.getBoundingClientRect();
+        const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+        const viewWidth = Math.max(document.documentElement.clientWidth, window.innerWidth);
+        
+        return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= viewHeight &&
+          rect.right <= viewWidth
+        );
+    },
+      
+    scrollToElementIfNotVisible: function(element) {
+        if (!Br1DomHelper.isElementInViewport(element)) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 };
