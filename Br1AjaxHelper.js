@@ -16,7 +16,7 @@
 
     get: function (url, params, successCallback, errorCallback) {
         console.log(`ajax get ('${url}', ${JSON.stringify(params)})`);
-        jQuery.getJSON(Br1AjaxHelper.getUrl(url), params,
+        return jQuery.getJSON(Br1AjaxHelper.getUrl(url), params,
             function (returnObj) {
                 Br1AjaxHelper._ajaxReturn(returnObj, successCallback, errorCallback);
             })
@@ -25,6 +25,7 @@
                     errorCallback, url, params);
             });
     },
+
     
     post: function (url, params, successCallback, errorCallback) {
         jQuery.post(Br1AjaxHelper.getUrl(url), params,         
@@ -121,6 +122,13 @@
 
     _ajaxFail: function (jqXHR, textStatus, errorThrown, errorCallback, url, params)
     {  
+        if (textStatus == "abort")
+        {
+            console.log("Br1AjaxHelper: Abortado propositalmente");
+            return;
+
+        }
+
         if (Br1AjaxHelper.unloading)
         {
             console.log("Br1AjaxHelper: Page is unloading, ignoring error");
