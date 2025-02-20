@@ -492,7 +492,7 @@
     },
 
     dateToStr: function (dt) {
-        if (dt === null)
+        if (Br1Helper.isNullOrEmpty(dt))
             return "";
         else
             return dt.getDate().toString().padStart(2, "0") + "/" 
