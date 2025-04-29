@@ -101,7 +101,7 @@ class Br1DomHelperSelect {
     }
 
     /**
-     * Retorna o texto do item selecionado
+     * Retorna o texto do 1º item selecionado
      * @returns {string}
      */
     text() {
@@ -111,6 +111,19 @@ class Br1DomHelperSelect {
             return "";
         else
             return this.elements[0].options[this.elements[0].selectedIndex].text;        
+    }
+
+    value() {
+        if (this.elements.length == 0)
+            return null;
+        else if (this.elements[0].options.length == 0)
+            return null;
+        else
+            return this.elements[0].value;        
+    }
+
+    exists() {
+        return this.elements.length > 0;
     }
 
     onLoad(callback) {
