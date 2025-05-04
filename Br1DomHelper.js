@@ -85,10 +85,20 @@ class Br1DomHelperEvents {
  */
 class Br1DomHelperSelect {
     constructor(selector, container) {
-        
-        this.container = container ?? document;
+        if (selector == null)
+            throw new Error("Br1DomHelper.select: O parâmetro selector não pode ser nulo.");
 
-        this.elements = this.container.querySelectorAll(selector);
+        if (selector instanceof HTMLSelectElement) {            
+            this.container = selector.parentElement;
+            this.elements = [selector];            
+        }
+        else
+        {
+            this.container = container ?? document;
+            this.elements = this.container.querySelectorAll(selector);
+            if (this.elements.length == 0)
+                throw new Error("Br1DomHelper.select: Nenhum elemento encontrado com o seletor informado: " + selector);
+        }    
     }
 
     /**
@@ -113,13 +123,29 @@ class Br1DomHelperSelect {
             return this.elements[0].options[this.elements[0].selectedIndex].text;        
     }
 
-    value() {
+    getValue() {
         if (this.elements.length == 0)
             return null;
         else if (this.elements[0].options.length == 0)
             return null;
         else
             return this.elements[0].value;        
+    }
+
+    setValue(value) {
+        this.elements.forEach(element => {
+            for (let i = 0; i < element.options.length; i++) {
+                if (element.options[i].value == value) {
+                    element.selectedIndex = i;
+                    return;                    
+                }
+            }
+
+            // Se não achou uma option com o valor, coloco o valor em um atributo data-, para que 
+            // possa ser consultado na função addFromArray ou addFromAjax
+            element.dataset.selectedValue = value;
+        });
+        return this;
     }
 
     exists() {
@@ -142,6 +168,10 @@ class Br1DomHelperSelect {
      */
     addFromArray(array, valueField, textField, selectedValue) {
         this.clear();
+
+        if (selectedValue == null)
+            selectedValue = this.elements[0].dataset.selectedValue ?? null;
+
         this.elements.forEach(element => {
             array.forEach(item => {
                 let option = document.createElement("option");
@@ -151,7 +181,7 @@ class Br1DomHelperSelect {
                     option.selected = true;
                 element.add(option);
             });
-
+        
             if (this.onLoadHandlers != null)
                 this.onLoadHandlers.forEach(handler => handler(element));
         });
@@ -175,7 +205,7 @@ class Br1DomHelperSelect {
         Br1AjaxHelper.get(url, params, data => {
             select.clear();
             select.sourceList = data;
-            select.addFromArray(this.sourceList, valueField, textField, selectedValue);
+            select.addFromArray(select.sourceList, valueField, textField, selectedValue);
         });
         return select;
     }
@@ -452,7 +482,9 @@ var Br1DomHelper = {
             let element = document.getElementById(key);
             if (element != null)
             {
-                if (element.classList.contains("radio-group"))
+                if (element.tagName == "SELECT")
+                    Br1DomHelper.select(element).setValue(obj[key]);                
+                else if (element.classList.contains("radio-group"))
                     Br1DomHelper.setRadioList(key, obj[key]);
                 else if (element.getAttribute("type") == "date")                
                     element.value = Br1Helper.dateToStrInput(Br1Helper.strToDate(obj[key]));
