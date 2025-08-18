@@ -413,6 +413,16 @@ var Br1DomHelper = {
         return i;
     },
 
+    hideTableRows: function(selector) {
+        document.querySelectorAll(selector)
+            .forEach(el => el.style.display = "none");
+    },
+
+    showTableRows: function(selector) {
+        document.querySelectorAll(selector)
+            .forEach(el => el.style.display = "");
+    },
+
     /**
      * Insere o novo elemento logo após o elemento passado como referência
      * @param {HTMLElement} previousElement 
