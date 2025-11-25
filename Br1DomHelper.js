@@ -172,17 +172,15 @@ class Br1DomHelperSelect {
         if (selectedValue == null)
             selectedValue = this.elements[0].dataset.selectedValue ?? null;        
 
-        this.elements.forEach(element => {
-            element.innerHTML = Br1DomHelper.generateOptionsHtml(array, selectedValue, false);
-
-            // array.forEach(item => {
-            //     let option = document.createElement("option");
-            //     option.value = item[valueField];
-            //     option.text = item[textField];
-            //     if (selectedValue != null && selectedValue == item[valueField])
-            //         option.selected = true;
-            //     element.add(option);
-            // });
+        this.elements.forEach(element => {                        
+            array.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item[valueField];
+                option.text = item[textField];
+                if (selectedValue != null && selectedValue == item[valueField])
+                    option.selected = true;
+                element.add(option);
+            });
         
             if (this.onLoadHandlers != null)
                 this.onLoadHandlers.forEach(handler => handler(element));
