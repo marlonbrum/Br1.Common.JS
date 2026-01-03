@@ -110,6 +110,18 @@ class Br1DomHelperSelect {
         return this;
     }
 
+    addOption(value, text, selected) {
+        this.elements.forEach(element => {
+            let option = document.createElement("option"); 
+            option.value = value;
+            option.text = text;
+            if (selected)
+                option.selected = true;
+            element.add(option);
+        });
+        return this; 
+    }
+
     /**
      * Retorna o texto do 1º item selecionado
      * @returns {string}
@@ -164,24 +176,24 @@ class Br1DomHelperSelect {
      * @param {string} valueField Nome do campo que contem o valor do item.
      * @param {string} textField Nome do campo que contem o texto do item.
      * @param {string} selectedValue Valor do item que deve ser selecionado.
+     * @param {object|null} emptyItem Item que será adicionado no início da lista (Default null)
      * @returns {Br1DomHelperSelect}
      */
-    addFromArray(array, valueField, textField, selectedValue) {
+    addFromArray(array, valueField, textField, selectedValue, emptyItem = null) {
         this.clear();
 
         if (selectedValue == null)
             selectedValue = this.elements[0].dataset.selectedValue ?? null;        
 
-        this.elements.forEach(element => {                        
-            array.forEach(item => {
-                let option = document.createElement("option");
-                option.value = item[valueField];
-                option.text = item[textField];
-                if (selectedValue != null && selectedValue == item[valueField])
-                    option.selected = true;
-                element.add(option);
-            });
+        if (emptyItem != null)
+            this.addOption("", emptyItem, false);
+
+        array.forEach(item => {
+            let selected = selectedValue != null && selectedValue == item[valueField];
+            this.addOption(item[valueField], item[textField], selected);
+        });
         
+        this.elements.forEach(element => {                                    
             if (this.onLoadHandlers != null)
                 this.onLoadHandlers.forEach(handler => handler(element));
         });
@@ -195,17 +207,18 @@ class Br1DomHelperSelect {
      * @param {string} valueField Nome do campo que contem o valor do item.
      * @param {string} textField Nome do campo que contem o texto do item.
      * @param {string} selectedValue Valor do item que deve ser selecionado.
+     * @param {object|null} emptyItem Item que será adicionado no início da lista (Default null)
      * @returns {Br1DomHelperSelect}
      */
-    addFromAjax(url, params, valueField, textField, selectedValue) {
+    addFromAjax(url, params, valueField, textField, selectedValue, emptyItem = null) {
         this.clear();
         this.addFromArray([{valor: 0, descricao: "Carregando..."}], "valor", "descricao", 0);
         let select = this;
 
         Br1AjaxHelper.get(url, params, data => {
             select.clear();
-            select.sourceList = data;
-            select.addFromArray(select.sourceList, valueField, textField, selectedValue);
+            select.sourceList = data;            
+            select.addFromArray(select.sourceList, valueField, textField, selectedValue, emptyItem);
         });
         return select;
     }
