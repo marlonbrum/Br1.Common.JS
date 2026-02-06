@@ -105,11 +105,11 @@
             return Br1AjaxHelper.rootUrl + url;
     },
 
-    _handleErrorMessage: function (errorMessage, errorCallback) {
+    _handleErrorMessage: function (errorMessage, errorCallback, errorID) {
         let showErrorMessage = true;
         if (Br1Helper.isFunction(errorCallback))
         {
-            showErrorMessage = errorCallback(errorMessage);
+            showErrorMessage = errorCallback(errorMessage, errorID);
             if (showErrorMessage === undefined)
                 showErrorMessage = true;
         }
@@ -136,12 +136,16 @@
         }
 
         let errorMessage;
-        
+        let errorID = "";
+
         if (!Br1Helper.isNullOrEmpty(jqXHR.responseJSON) && 
             !Br1Helper.isNullOrEmpty(jqXHR.responseJSON.ErrorMessage))
+        {
             // Se veio a propriedade errorMessage em JSON, entendo que o 
             // erro foi tratado no servidor
             errorMessage = jqXHR.responseJSON.ErrorMessage;
+            errorID = Br1Helper.isNullOrEmpty( jqXHR.responseJSON.errorID ) ? "" : jqXHR.responseJSON.errorID;    
+        }
         else {
             if (Br1AjaxHelper.onLocalError != null)
             {                
@@ -191,7 +195,7 @@
             errorMessage = "Erro ao efetuar a solicitação ao servidor (x)   ";
         }
         console.error('ajax fail:' + errorMessage);
-        Br1AjaxHelper._handleErrorMessage(errorMessage, errorCallback);
+        Br1AjaxHelper._handleErrorMessage(errorMessage, errorCallback, errorID);
     },
 
     _ajaxReturn: function (returnObj, successCallback, errorCallback) {
@@ -203,7 +207,9 @@
         else
         {
             console.error("ajax error: " + returnObj.ErrorMessage);
-            Br1AjaxHelper._handleErrorMessage(returnObj.ErrorMessage, errorCallback);
+            let errorID = Br1Helper.isNullOrEmpty( returnObj.errorID ) ? "" : returnObj.errorID;    
+
+            Br1AjaxHelper._handleErrorMessage(returnObj.ErrorMessage, errorCallback, errorID);
         }
     }
 };
