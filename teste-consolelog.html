@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Br1ConsoleLog - teste</title>
+
+    <!-- Precisa ser o PRIMEIRO script da página -->
+    <script src="Br1ConsoleLog.js"></script>
+    <script>
+        // Sem endpoint: nada é enviado, o rastro fica só em memória.
+        // Passe uma URL no init() para testar o envio de verdade.
+        Br1ConsoleLog.init({ app: "teste", contexto: "teste-consolelog", debug: true });
+    </script>
+
+    <style>
+        body { font-family: sans-serif; margin: 24px; max-width: 900px; }
+        button { padding: 8px 14px; margin: 4px 4px 4px 0; cursor: pointer; }
+        pre { background: #f4f4f4; padding: 12px; overflow: auto; max-height: 420px;
+              font-size: 12px; line-height: 1.45; }
+        .ok { color: #2e7d32; } .fail { color: #b71c1c; }
+        h2 { margin-top: 28px; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<h1>Br1ConsoleLog</h1>
+<p>
+    Abra o devtools: tudo que aparece no console também é capturado.
+    O código desta sessão é <b id="codigo"></b>.
+</p>
+
+<h2>1. Gerar entradas</h2>
+<button onclick="console.log('mensagem simples')">console.log</button>
+<button onclick="console.warn('um aviso')">console.warn</button>
+<button onclick="console.error('um erro')">console.error</button>
+<button onclick="console.log('%c colorido ', 'color: blue', { a: 1, b: [1,2,3] })">log com %c e objeto</button>
+<button onclick="Br1ConsoleLog.mark('marcação manual', { passo: 3 })">mark()</button>
+<button onclick="for (var i=0;i&lt;5;i++) console.log('repetido')">5x repetido (agrupa)</button>
+
+<h2>2. Erros (o motivo de tudo isto existir)</h2>
+<button onclick="setTimeout(function(){ funcaoQueNaoExiste(); }, 100)">ReferenceError assíncrono</button>
+<button onclick="setTimeout(function(){ Promise.reject(new Error('promise sem catch')); }, 100)">Promise rejeitada</button>
+<button onclick="carregarRecursoInexistente()">Recurso 404</button>
+
+<p>
+    O <i>ReferenceError assíncrono</i> reproduz a forma exata do bug de produção: uma
+    exceção lançada dentro de um callback. Digitar a expressão no devtools <b>não</b>
+    serve como teste — o Chrome não passa exceções digitadas no console pelo
+    <code>window.onerror</code>.
+</p>
+
+<h2>3. Redação de dados sensíveis</h2>
+<button onclick="testarRedacao()">Rodar os testes de redação</button>
+<button onclick="logarCartaoFalso()">Logar um payload de cartão (fictício)</button>
+
+<h2>4. Rastro</h2>
+<button onclick="mostrar()">Ver buildPayload()</button>
+<button onclick="Br1ConsoleLog.sendDiagnostic()">sendDiagnostic() (Ctrl+Alt+Shift+D)</button>
+<button onclick="Br1ConsoleLog.clear(); mostrar()">Limpar</button>
+
+<pre id="saida"></pre>
+
+<script>
+    document.getElementById("codigo").textContent = Br1ConsoleLog.getShortCode();
+
+    function mostrar() {
+        document.getElementById("saida").textContent =
+            JSON.stringify(Br1ConsoleLog.buildPayload("teste"), null, 2);
+    }
+
+    function carregarRecursoInexistente() {
+        var s = document.createElement("script");
+        s.src = "nao-existe-" + new Date().getTime() + ".js";
+        document.body.appendChild(s);
+    }
+
+    // Números de teste publicados, que não pertencem a ninguém.
+    function logarCartaoFalso() {
+        var parametros = {
+            brand: "visa", number: "4111111111111111", cvv: "123",
+            expiration_month: "12", expiration_year: "2030"
+        };
+        console.log("$gn.checkout.getPaymentToken(" + JSON.stringify(parametros) + ")");
+        console.log("objeto direto:", parametros);
+        mostrar();
+    }
+
+    function testarRedacao() {
+        var casos = [
+            ["PAN em JSON",      '{"number":"4111111111111111"}',  '{"number":"[REDACTED]"}'],
+            ["CVV em JSON",      '{"cvv":"123"}',                  '{"cvv":"[REDACTED]"}'],
+            ["PAN solto",        'cartao 4111111111111111 ok',     'cartao ****1111 ok'],
+            ["PAN com espaços",  '6011 0567 9532 1583',            '****1583'],
+            ["senha",            'senha=segredo',                  'senha="[REDACTED]"'],
+            ["CPF não é cartão", 'cpf 12345678901',                'cpf 12345678901'],
+            ["nº do pedido",     '{"order_number":4711}',          '{"order_number":4711}'],
+            ["telefone",         '{"phone_number":"11987654321"}', '{"phone_number":"11987654321"}']
+        ];
+
+        var html = "";
+        for (var i = 0; i < casos.length; i++) {
+            var real = Br1ConsoleLog.redactText(casos[i][1]);
+            var ok = real === casos[i][2];
+            html += (ok ? "PASS  " : "FALHOU ") + casos[i][0] + "\n";
+            if (!ok)
+                html += "      esperado: " + casos[i][2] + "\n      real:     " + real + "\n";
+        }
+
+        html += "\nserialize() de um objeto de cartão:\n  "
+             + JSON.stringify(Br1ConsoleLog.serialize(
+                 { brand: "visa", number: "4111111111111111", cvv: "123" }));
+
+        document.getElementById("saida").textContent = html;
+    }
+</script>
+
+</body>
+</html>
