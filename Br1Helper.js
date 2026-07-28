@@ -357,6 +357,15 @@
     },
     
     /**
+     * Remove da string qualquer caracter que não forem Alfanumericos de A-Z, a-z e 0-9
+     * @param {string} valor string a ser tratada
+     * @returns {string} String com caracteres válidos
+     */
+    stripNonAlfanumber: function (valor) {
+        return valor.replace(/[^A-Za-z0-9]/g, "");
+    },
+
+    /**
      * Verifica se o CPF informado é valido. 
      * @param {string} cpf CPF a ser validado, pode ser informado com ou sem os traços e pontos
      * @returns {bool} Booleano indicando se o CPF é valido ou não
@@ -427,56 +436,63 @@
 	},
 
     validarCNPJ: function (cnpj) {
-        cnpj = cnpj.replace(/[^\d]+/g, '');
+        cnpj = cnpj.toUpperCase().replace(/[^A-Z0-9]+/g, '');
 
-        if (cnpj == '') return false;
-
-        if (cnpj.length != 14)
+        if(cnpj === '')
             return false;
 
-        // Elimina CNPJs invalidos conhecidos
-        if (cnpj == "00000000000000" ||
-            cnpj == "11111111111111" ||
-            cnpj == "22222222222222" ||
-            cnpj == "33333333333333" ||
-            cnpj == "44444444444444" ||
-            cnpj == "55555555555555" ||
-            cnpj == "66666666666666" ||
-            cnpj == "77777777777777" ||
-            cnpj == "88888888888888" ||
-            cnpj == "99999999999999")
+        if(cnpj.length !== 14)
             return false;
 
-        // Valida DVs
-        tamanho = cnpj.length - 2
-        numeros = cnpj.substring(0, tamanho);
-        digitos = cnpj.substring(tamanho);
-        soma = 0;
-        pos = tamanho - 7;
-        for (i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
-            if (pos < 2)
+        // Os dois dígitos verificadores devem ser numéricos
+        if(!/^\d{2}$/.test(cnpj.substring(12)))
+            return false;
+
+        // Elimina sequências de caracteres iguais
+        if(/^(.)\1{13}$/.test(cnpj))
+            return false;
+
+        function valor (caractere) {
+            return caractere.charCodeAt(0) - 48;
+        }
+
+        // Primeiro DV
+        let tamanho = 12;
+        let soma = 0;
+        let pos = 5;
+
+        for(let i = 0; i < tamanho; i++)
+        {
+            soma += valor(cnpj.charAt(i)) * pos--;
+            if(pos < 2)
                 pos = 9;
         }
-        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (resultado != digitos.charAt(0))
+
+        let resultado = (soma % 11) < 2 ? 0 : 11 - (soma % 11);
+
+        if(resultado !== Number(cnpj.charAt(12)))
             return false;
 
-        tamanho = tamanho + 1;
-        numeros = cnpj.substring(0, tamanho);
+        // Segundo DV
+        tamanho = 13;
         soma = 0;
-        pos = tamanho - 7;
-        for (i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
-            if (pos < 2)
+        pos = 6;
+
+        for(let i = 0; i < 12; i++)
+        {
+            soma += valor(cnpj.charAt(i)) * pos--;
+            if(pos < 2)
                 pos = 9;
         }
-        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (resultado != digitos.charAt(1))
+
+        soma += resultado * 2;
+
+        resultado = (soma % 11) < 2 ? 0 : 11 - (soma % 11);
+
+        if(resultado !== Number(cnpj.charAt(13)))
             return false;
 
         return true;
-    
     },
 
     validarData: function (data) {
@@ -676,6 +692,25 @@
             + parameter + '=' + encodeURIComponent(value);
     },
 
+    applyMaskAlfanumber: function (value, mask) {
+        let v = Br1Helper.stripNonAlfanumber(value);
+
+        let iValor = 0;
+        let iMask = 0;
+
+        let resultado = "";
+        while(iValor < v.length && iMask < mask.length)
+        {
+            if(mask[iMask] == "0" || mask[iMask] == "9")
+                resultado += v[iValor++];
+            else if(iMask < mask.length)
+                resultado += mask[iMask];
+            iMask++;
+        }
+
+        return resultado;
+    },
+
     /**
      * Aplica a máscara ao texto informado. Antes de aplicar a máscara, a função irá 
      * remover do texto de origem todos os caracteres que não sejam digitos. 
@@ -688,9 +723,10 @@
      * @param {string} mask Máscara a ser aplicada, use '9' ou '0' para indicar os dígitos
      * @returns Retorna o valor formatado
      */
-    applyMask: function(value, mask)
+    applyMask: function (value, mask, alfanumbers = false)
     {
-        let v = Br1Helper.stripNonDigits(value);
+        let v = alfanumbers ? Br1Helper.stripNonAlfanumber(value)
+            : Br1Helper.stripNonDigits(value);
         
         let iValor = 0;
         let iMask = 0;
@@ -715,7 +751,7 @@
 
     formatarCNPJ: function(valor)
     {
-        return Br1Helper.applyMask(valor, Br1Helper.Masks.Cnpj);
+        return Br1Helper.applyMask(valor, Br1Helper.Masks.Cnpj, true);
     },
 
     /**
@@ -725,7 +761,7 @@
      */
     identificarDocumento: function(valor)
     {
-        valor = Br1Helper.stripNonDigits(valor);
+        valor = Br1Helper.stripNonAlfanumber(valor);
         if (valor.length == 11)
             return "cpf";
         else if (valor.length == 14)
