@@ -12,7 +12,7 @@
         Telefone8Digitos: '(00) 0000-0000#',
         Telefone9Digitos: '(00) 0 0000-0000',
         Cpf: '000.000.000-00',
-        Cnpj: '00.000.000/0000-00',
+        Cnpj: 'AA.AAA.AAA/AAAA-00',
         Data: '00/00/0000',        
         Hora: '00:00',
         DataHora: '00/00/0000 00:00',
@@ -692,25 +692,6 @@
             + parameter + '=' + encodeURIComponent(value);
     },
 
-    applyMaskAlfanumber: function (value, mask) {
-        let v = Br1Helper.stripNonAlfanumber(value);
-
-        let iValor = 0;
-        let iMask = 0;
-
-        let resultado = "";
-        while(iValor < v.length && iMask < mask.length)
-        {
-            if(mask[iMask] == "0" || mask[iMask] == "9")
-                resultado += v[iValor++];
-            else if(iMask < mask.length)
-                resultado += mask[iMask];
-            iMask++;
-        }
-
-        return resultado;
-    },
-
     /**
      * Aplica a máscara ao texto informado. Antes de aplicar a máscara, a função irá 
      * remover do texto de origem todos os caracteres que não sejam digitos. 
@@ -734,7 +715,7 @@
         let resultado = "";
         while (iValor < v.length && iMask < mask.length)
         {
-            if (mask[iMask] == "0" || mask[iMask] == "9")
+            if(mask[iMask] == "A" || mask[iMask] == "0" || mask[iMask] == "9")
                 resultado += v[iValor++];                
             else if (iMask < mask.length)
                 resultado += mask[iMask];
