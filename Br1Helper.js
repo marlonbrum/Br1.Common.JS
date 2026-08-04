@@ -730,9 +730,16 @@
         return Br1Helper.applyMask(valor, Br1Helper.Masks.Cpf);
     },
 
+    /**
+     * Formata o CNPJ no padrão 'AA.AAA.AAA/AAAA-00'.
+     * As letras do CNPJ alfanumérico são sempre maiúsculas, então o valor é
+     * convertido aqui — o usuário pode digitar em minúsculas.
+     * @param {string} valor CNPJ a ser formatado, com ou sem máscara
+     * @returns {string} CNPJ formatado e em maiúsculas
+     */
     formatarCNPJ: function(valor)
     {
-        return Br1Helper.applyMask(valor, Br1Helper.Masks.Cnpj, true);
+        return Br1Helper.applyMask(valor.toUpperCase(), Br1Helper.Masks.Cnpj, true);
     },
 
     /**
